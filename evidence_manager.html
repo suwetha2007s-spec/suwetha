@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Evidence Manager | AI Courtroom Assistant</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .page {
+            min-height: 100vh;
+        }
+
+        .main {
+            max-width: 1400px;
+            margin: auto;
+            padding: 30px 40px 50px;
+        }
+
+
+        /* =====================================================
+           TOP HEADER
+        ===================================================== */
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .title-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .title-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            background: #e8efff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 27px;
+        }
+
+        .title-area h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .title-area p {
+            margin-top: 5px;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .back-button {
+            text-decoration: none;
+            background: white;
+            color: #374151;
+            border: 1px solid #e1e5eb;
+            padding: 11px 18px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            background: #f1f5ff;
+            border-color: #b8c8f5;
+        }
+
+
+        /* =====================================================
+           STATISTICS
+        ===================================================== */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e8ebf0;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+        }
+
+        .stat-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 11px;
+            background: #eef3ff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 21px;
+        }
+
+        .stat-card span {
+            display: block;
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+
+        .stat-card strong {
+            font-size: 25px;
+            color: #172033;
+        }
+
+
+        /* =====================================================
+           CONTENT GRID
+        ===================================================== */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 390px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .card {
+            background: white;
+            border: 1px solid #e7eaf0;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.04);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 21px 23px;
+            border-bottom: 1px solid #edf0f4;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            color: #172033;
+        }
+
+        .card-header p {
+            margin-top: 5px;
+            color: #7a8494;
+            font-size: 13px;
+        }
+
+        .card-body {
+            padding: 23px;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            border: 1px solid #dfe3e8;
+            border-radius: 9px;
+            padding: 11px 12px;
+            font-family: inherit;
+            font-size: 14px;
+            color: #1f2937;
+            background: #fff;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #4f7cff;
+            box-shadow: 0 0 0 3px rgba(79, 124, 255, 0.10);
+        }
+
+        .form-group textarea {
+            min-height: 105px;
+            resize: vertical;
+        }
+
+        .required {
+            color: #ef4444;
+        }
+
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        .submit-button {
+            width: 100%;
+            border: none;
+            border-radius: 9px;
+            padding: 13px;
+            background: #315edb;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .submit-button:hover {
+            background: #244fc2;
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           EVIDENCE RECORDS
+        ===================================================== */
+
+        .records-card {
+            min-height: 500px;
+        }
+
+        .records-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .record-count {
+            background: #eef3ff;
+            color: #315edb;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .records-body {
+            padding: 20px;
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 18px;
+            background: #f1f4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            margin-bottom: 17px;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            font-size: 18px;
+            margin-bottom: 7px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           EVIDENCE TABLE
+        ===================================================== */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 13px 12px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            border-bottom: 1px solid #e7ebf0;
+        }
+
+        td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #edf0f4;
+            font-size: 13px;
+            color: #374151;
+        }
+
+        tr:hover td {
+            background: #fafbff;
+        }
+
+        .evidence-name {
+            font-weight: 600;
+            color: #172033;
+        }
+
+        .case-number {
+            color: #315edb;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           BADGES
+        ===================================================== */
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .badge-high {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-low {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .type-badge {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 5px 9px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           AI ANALYSIS
+        ===================================================== */
+
+        .ai-card {
+            margin-top: 24px;
+            background: linear-gradient(
+                135deg,
+                #f4f7ff,
+                #ffffff
+            );
+            border: 1px solid #dce5ff;
+            border-radius: 16px;
+            padding: 22px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .ai-icon {
+            width: 52px;
+            height: 52px;
+            min-width: 52px;
+            border-radius: 13px;
+            background: #e4ebff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+        }
+
+        .ai-card h3 {
+            font-size: 17px;
+            color: #172033;
+            margin-bottom: 5px;
+        }
+
+        .ai-card p {
+            font-size: 13px;
+            color: #687386;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           FLASH MESSAGE
+        ===================================================== */
+
+        .flash-message {
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+            padding: 12px 15px;
+            border-radius: 9px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 650px) {
+
+            .main {
+                padding: 20px;
+            }
+
+            .top-header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .title-area h1 {
+                font-size: 23px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="page">
+
+    <main class="main">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================= -->
+
+        <div class="top-header">
+
+            <div class="title-area">
+
+                <div class="title-icon">
+                    ⚖
+                </div>
+
+                <div>
+
+                    <h1>
+                        Evidence Manager
+                    </h1>
+
+                    <p>
+                        Upload, organize and manage case evidence
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <a href="{{ url_for('dashboard') }}"
+               class="back-button">
+
+                ← Dashboard
+
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             FLASH MESSAGES
+        ================================================= -->
+
+        {% with messages = get_flashed_messages() %}
+
+            {% if messages %}
+
+                {% for message in messages %}
+
+                    <div class="flash-message">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- =================================================
+             STATISTICS
+        ================================================= -->
+
+        <section class="stats">
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ◈
+                </div>
+
+                <div>
+
+                    <span>
+                        Total Evidence
+                    </span>
+
+                    <strong>
+                        {{ evidence|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ⚠
+                </div>
+
+                <div>
+
+                    <span>
+                        High Priority
+                    </span>
+
+                    <strong>
+
+                        {{
+                            evidence
+                            |selectattr("priority", "equalto", "High")
+                            |list
+                            |length
+                        }}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div class="stat-icon">
+                    ✓
+                </div>
+
+                <div>
+
+                    <span>
+                        Managed Records
+                    </span>
+
+                    <strong>
+                        {{ evidence|length }}
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             MAIN CONTENT
+        ================================================= -->
+
+        <section class="content-grid">
+
+
+            <!-- =================================================
+                 ADD EVIDENCE
+            ================================================= -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <h2>
+                        + Add Evidence
+                    </h2>
+
+                    <p>
+                        Add important evidence related to a case.
+                    </p>
+
+                </div>
+
+
+                <div class="card-body">
+
+                    <form method="POST"
+                          action="{{ url_for('add_evidence') }}">
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Case Number
+                            </label>
+
+                            <input
+                                type="text"
+                                name="case_number"
+                                placeholder="Example: CA-1024"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Evidence Name
+                                <span class="required">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                name="evidence_name"
+                                placeholder="Enter evidence name"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Evidence Type
+                            </label>
+
+                            <select name="evidence_type">
+
+                                <option value="Image">
+                                    Image
+                                </option>
+
+                                <option value="Document">
+                                    Document
+                                </option>
+
+                                <option value="Video">
+                                    Video
+                                </option>
+
+                                <option value="Audio">
+                                    Audio
+                                </option>
+
+                                <option value="Physical Evidence">
+                                    Physical Evidence
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Evidence Priority
+                            </label>
+
+                            <select name="priority">
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                                <option value="Medium" selected>
+                                    Medium
+                                </option>
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Description
+                            </label>
+
+                            <textarea
+                                name="description"
+                                placeholder="Describe the evidence..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="submit-button">
+
+                            + Add Evidence
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 EVIDENCE RECORDS
+            ================================================= -->
+
+            <div class="card records-card">
+
+                <div class="card-header records-header">
+
+                    <div>
+
+                        <h2>
+                            Evidence Records
+                        </h2>
+
+                        <p>
+                            Review and manage collected evidence
+                        </p>
+
+                    </div>
+
+                    <span class="record-count">
+
+                        {{ evidence|length }} Records
+
+                    </span>
+
+                </div>
+
+
+                <div class="records-body">
+
+
+                    {% if evidence %}
+
+
+                        <div class="table-wrapper">
+
+                            <table>
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Evidence
+                                        </th>
+
+                                        <th>
+                                            Case
+                                        </th>
+
+                                        <th>
+                                            Type
+                                        </th>
+
+                                        <th>
+                                            Priority
+                                        </th>
+
+                                        <th>
+                                            Description
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    {% for item in evidence %}
+
+
+                                        <tr>
+
+                                            <td>
+
+                                                <div class="evidence-name">
+
+                                                    {{ item["evidence_name"] }}
+
+                                                </div>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="case-number">
+
+                                                    {{ item["case_number"] or "—" }}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="type-badge">
+
+                                                    {{ item["evidence_type"] or "Other" }}
+
+                                                </span>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {% if item["priority"] == "High" %}
+
+                                                    <span class="badge badge-high">
+                                                        High
+                                                    </span>
+
+                                                {% elif item["priority"] == "Low" %}
+
+                                                    <span class="badge badge-low">
+                                                        Low
+                                                    </span>
+
+                                                {% else %}
+
+                                                    <span class="badge badge-medium">
+                                                        Medium
+                                                    </span>
+
+                                                {% endif %}
+
+
+                                            </td>
+
+
+                                            <td>
+
+                                                {{ item["description"] or "No description" }}
+
+                                            </td>
+                                            <td>
+    <form action="{{ url_for('delete_evidence', evidence_id=item['id']) }}"
+          method="POST"
+          onsubmit="return confirm('Are you sure you want to delete this evidence?');">
+
+        <button type="submit"
+                style="background:blue; color:white; border:none; padding:8px 14px; border-radius:6px; cursor:pointer;">
+            Delete
+        </button>
+
+    </form>
+</td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                    {% else %}
+
+
+                        <div class="empty-state">
+
+                            <div class="empty-icon">
+                                ◈
+                            </div>
+
+                            <h3>
+                                No Evidence Added Yet
+                            </h3>
+
+                            <p>
+                                Add your first evidence using the form.
+                            </p>
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             AI EVIDENCE ANALYSIS
+        ================================================= -->
+
+        <section class="ai-card">
+
+            <div class="ai-icon">
+                ✦
+            </div>
+
+            <div>
+
+                <h3>
+                    AI Evidence Analysis
+                </h3>
+
+                <p>
+                    The AI module can analyze evidence descriptions,
+                    identify important information and assist with
+                    evidence priority classification.
+                </p>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

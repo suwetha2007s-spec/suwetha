@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Generator | AI Courtroom</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #10284d;
+            --blue: #2878e8;
+            --light-blue: #edf5ff;
+            --text: #1d3152;
+            --muted: #74839b;
+            --border: #dce7f5;
+            --background: #f4f8fe;
+            --success: #159b72;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+        }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 274px;
+            height: 100vh;
+            padding: 20px 12px;
+            background: linear-gradient(180deg, #10284d, #173b70);
+            color: white;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px 24px;
+            border-bottom: 1px solid rgba(255,255,255,.16);
+            margin-bottom: 15px;
+        }
+
+        .brand i {
+            font-size: 34px;
+        }
+
+        .brand h2 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 12px;
+            opacity: .8;
+            margin-top: 4px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            margin: 5px 0;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 12px 13px;
+            border-radius: 8px;
+            color: #dce8fa;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: linear-gradient(90deg, #267be8, #2d67c8);
+            color: white;
+        }
+
+        .sidebar a i {
+            width: 18px;
+            text-align: center;
+        }
+
+        /* MAIN */
+
+        .main-content {
+            margin-left: 274px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 76px;
+            background: white;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 0 30px;
+        }
+
+        .search {
+            flex: 1;
+            max-width: 520px;
+            position: relative;
+        }
+
+        .search i {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            color: #56708f;
+        }
+
+        .search input {
+            width: 100%;
+            padding: 12px 15px 12px 43px;
+            border: 1px solid #cbdced;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .top-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-size: 13px;
+        }
+
+        .user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #20539b;
+            color: white;
+            display: grid;
+            place-items: center;
+            font-weight: bold;
+        }
+
+        .user strong,
+        .user small {
+            display: block;
+        }
+
+        .user small {
+            color: var(--muted);
+        }
+
+        /* PAGE */
+
+        .page {
+            padding: 30px 32px 45px;
+        }
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .heading-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            background: #dcecff;
+            color: var(--blue);
+            display: grid;
+            place-items: center;
+            font-size: 23px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .page-heading p {
+            margin: 5px 0 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: 21px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(30,66,110,.04);
+        }
+
+        /* FORM */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 205px;
+            gap: 22px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
+
+        .field select,
+        .field input {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cbdced;
+            border-radius: 7px;
+            background: white;
+            color: var(--text);
+            font-size: 13px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 7px;
+            padding: 13px 17px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+        }
+
+        .btn-primary {
+            background: #2878e8;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #edf2f8;
+            color: #4b607b;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        /* HEADINGS */
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 17px;
+        }
+
+        .section-heading h2 i {
+            color: var(--blue);
+            margin-right: 9px;
+        }
+
+        .success-badge {
+            background: #e5f8ef;
+            color: #11966c;
+            padding: 8px 13px;
+            border-radius: 7px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* SUMMARY */
+
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            background: #edf6ff;
+            border: 1px solid #cfe4ff;
+            border-radius: 8px;
+            padding: 17px 8px;
+            margin-bottom: 18px;
+        }
+
+        .summary-item {
+            padding: 0 17px;
+            border-right: 1px solid #c9def6;
+        }
+
+        .summary-item:last-child {
+            border-right: none;
+        }
+
+        .summary-item span {
+            display: block;
+            color: #3672bd;
+            font-size: 11px;
+            margin-bottom: 8px;
+        }
+
+        .summary-item strong {
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+        .status-active {
+            color: var(--success);
+        }
+
+        /* DETAILS */
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            gap: 16px;
+        }
+
+        .inner-box {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 18px;
+        }
+
+        .inner-box h3 {
+            margin: 0 0 18px;
+            font-size: 15px;
+        }
+
+        .inner-box h3 i {
+            color: var(--blue);
+            margin-right: 8px;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 125px 15px 1fr;
+            gap: 7px;
+            margin: 12px 0;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+
+        .detail-row .label {
+            color: #314e75;
+        }
+
+        .detail-row .value {
+            color: #243d61;
+            word-break: break-word;
+        }
+
+        /* STATISTICS */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat {
+            border-radius: 8px;
+            padding: 14px;
+            min-height: 105px;
+        }
+
+        .stat.blue {
+            background: #edf5ff;
+        }
+
+        .stat.green {
+            background: #ecfaf4;
+        }
+
+        .stat.purple {
+            background: #f2f0ff;
+        }
+
+        .stat.orange {
+            background: #fff5e9;
+        }
+
+        .stat i {
+            font-size: 20px;
+            margin-bottom: 12px;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 11px;
+            color: #61748d;
+        }
+
+        .stat strong {
+            display: block;
+            margin-top: 6px;
+            font-size: 24px;
+        }
+
+        /* INFORMATION */
+
+        .info-list {
+            display: grid;
+            gap: 13px;
+            font-size: 12px;
+        }
+
+        .info-list div {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            border-bottom: 1px dashed #dfe7f1;
+            padding-bottom: 8px;
+        }
+
+        .info-list span {
+            color: #687d97;
+        }
+
+        .info-list strong {
+            color: #243d61;
+            text-align: right;
+        }
+
+        /* REPORT CONTENT */
+
+        .report-content {
+            border: 1px solid #cfe0f5;
+            border-radius: 7px;
+            padding: 25px;
+            background: white;
+        }
+
+        .report-content h2 {
+            text-align: center;
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .subtitle {
+            text-align: center;
+            margin: 7px 0 25px;
+            font-size: 13px;
+            color: #5f7390;
+        }
+
+        .report-content h4 {
+            margin: 16px 0 8px;
+            font-size: 13px;
+        }
+
+        .report-content p,
+        .report-content li {
+            font-size: 12px;
+            line-height: 1.8;
+            color: #455e7d;
+        }
+
+        .report-content ul {
+            padding-left: 20px;
+        }
+
+        .note {
+            background: #f1f6ff;
+            border-left: 4px solid var(--blue);
+            border-radius: 6px;
+            padding: 16px;
+            color: #4e6582;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 15px;
+            color: var(--muted);
+        }
+
+        .empty-state i {
+            font-size: 35px;
+            margin-bottom: 12px;
+            color: #a8bad0;
+        }
+
+        .empty-state p {
+            margin: 6px 0;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #8b9bb0;
+            font-size: 12px;
+            padding: 15px;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1200px) {
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .button-cell {
+                grid-column: 1 / -1;
+            }
+
+            .report-summary {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
+            }
+
+            .summary-item {
+                border-right: none;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .topbar {
+                height: auto;
+                padding: 15px;
+                flex-wrap: wrap;
+            }
+
+            .search {
+                max-width: none;
+                flex-basis: 100%;
+            }
+
+            .page {
+                padding: 20px;
+            }
+
+            .two-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .form-grid,
+            .report-summary,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-cell {
+                grid-column: auto;
+            }
+
+            .report-content {
+                padding: 15px;
+            }
+        }
+
+        @media print {
+            .sidebar,
+            .topbar,
+            .page-heading,
+            .generate-section,
+            .export-section,
+            .footer,
+            .legal-section {
+                display: none !important;
+            }
+
+            .main-content {
+                margin: 0;
+            }
+
+            .page {
+                padding: 0;
+            }
+
+            .card {
+                border: none;
+                box-shadow: none;
+            }
+
+            body {
+                background: white;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <i class="fas fa-landmark"></i>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <span>Legal Assistant</span>
+            </div>
+        </div>
+
+        <ul>
+
+            
+
+            
+            
+        </ul>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="search">
+                <i class="fas fa-search"></i>
+
+                <input type="text"
+                       placeholder="Search cases, documents, evidence...">
+            </div>
+
+            <div class="top-actions">
+
+                <span>
+                    <i class="fas fa-globe"></i>
+                    English
+                </span>
+
+                <span>
+                    <i class="fas fa-bell"></i>
+                </span>
+
+                <div class="user">
+
+                    <div class="avatar">
+                        S
+                    </div>
+
+                    <div>
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <small>
+                            Legal User
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+
+        <main class="page">
+
+            <div class="page-heading">
+
+                <div class="heading-icon">
+                    <i class="fas fa-file-lines"></i>
+                </div>
+
+                <div>
+
+                    <h1>
+                        Report Generator
+                    </h1>
+
+                    <p>
+                        Generate detailed reports for your cases, documents and evidence.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- GENERATE FORM -->
+
+            <section class="card generate-section">
+
+                <form action="{{ url_for('report_generator') }}"
+                      method="POST">
+
+                    <div class="form-grid">
+
+                        <div class="field">
+
+                            <label for="case_id">
+                                Select Case
+                            </label>
+
+                            <select id="case_id"
+                                    name="case_id"
+                                    required>
+
+                                <option value="">
+                                    Select a case
+                                </option>
+
+                                {% for case in cases %}
+
+                                    <option value="{{ case['case_id'] }}">
+
+                                        {{ case['case_id'] }} -
+                                        {{ case['case_name'] }}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="field">
+
+                            <label for="report_type">
+                                Report Type
+                            </label>
+
+                            <select id="report_type"
+                                    name="report_type"
+                                    required>
+
+                                <option value="Complete Case Report">
+                                    Complete Case Report
+                                </option>
+
+                                <option value="Evidence Report">
+                                    Evidence Report
+                                </option>
+
+                                <option value="AI Case Summary">
+                                    AI Case Summary
+                                </option>
+
+                                <option value="Risk Analysis Report">
+                                    Risk Analysis Report
+                                </option>
+
+                                <option value="Legal Recommendation Report">
+                                    Legal Recommendation Report
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="button-cell">
+
+                            <button class="btn btn-primary"
+                                    type="submit">
+
+                                <i class="fas fa-file-export"></i>
+
+                                Generate Report
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </form>
+
+
+                <div class="button-row">
+
+                    <button class="btn btn-secondary"
+                            type="button"
+                            onclick="clearForm()">
+
+                        <i class="fas fa-rotate-left"></i>
+
+                        Clear
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- GENERATED REPORT -->
+
+            {% if report %}
+
+            <section class="card">
+
+                <div class="section-heading">
+
+                    <h2>
+                        <i class="fas fa-file-circle-check"></i>
+                        Generated Report
+                    </h2>
+
+                    {% if report.case_found %}
+
+                        <span class="success-badge">
+
+                            <i class="fas fa-check-circle"></i>
+
+                            Report Generated Successfully
+
+                        </span>
+
+                    {% else %}
+
+                        <span class="success-badge"
+                              style="background:#fff1e8;color:#c96a25;">
+
+                            <i class="fas fa-circle-exclamation"></i>
+
+                            Case Not Found
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- REPORT SUMMARY -->
+
+                <div class="report-summary">
+
+                    <div class="summary-item">
+
+                        <span>Case ID</span>
+
+                        <strong>
+                            {{ report.case_id }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>Case Name</span>
+
+                        <strong>
+                            {{ report.case_name }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>Case Type</span>
+
+                        <strong>
+                            {{ report.case_type }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>Status</span>
+
+                        <strong class="status-active">
+
+                            {{ report.case_status }}
+
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>Report Type</span>
+
+                        <strong>
+                            {{ report.report_type }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- DETAILS AND STATISTICS -->
+
+                <div class="two-columns">
+
+
+                    <!-- CASE DETAILS -->
+
+                    <div class="inner-box">
+
+                        <h3>
+
+                            <i class="fas fa-folder-open"></i>
+
+                            Case Details
+
+                        </h3>
+
+
+                        <div class="detail-row">
+
+                            <span class="label">Case ID</span>
+
+                            <span>:</span>
+
+                            <span class="value">
+                                {{ report.case_id }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span class="label">Case Name</span>
+
+                            <span>:</span>
+
+                            <span class="value">
+                                {{ report.case_name }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span class="label">Case Type</span>
+
+                            <span>:</span>
+
+                            <span class="value">
+                                {{ report.case_type }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span class="label">Status</span>
+
+                            <span>:</span>
+
+                            <span class="value">
+                                {{ report.case_status }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="detail-row">
+
+                            <span class="label">Description</span>
+
+                            <span>:</span>
+
+                            <span class="value">
+                                {{ report.case_description }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RIGHT SIDE -->
+
+                    <div>
+
+
+                        <!-- STATISTICS -->
+
+                        <div class="inner-box">
+
+                            <h3>
+
+                                <i class="fas fa-chart-pie"></i>
+
+                                Case Statistics
+
+                            </h3>
+
+
+                            <div class="stats-grid">
+
+
+                                <div class="stat blue">
+
+                                    <i class="fas fa-folder"></i>
+
+                                    <span>Total Cases</span>
+
+                                    <strong>
+                                        {{ report.cases }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="stat green">
+
+                                    <i class="fas fa-shield-halved"></i>
+
+                                    <span>Active Cases</span>
+
+                                    <strong>
+                                        {{ report.active_cases }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="stat purple">
+
+                                    <i class="fas fa-file-lines"></i>
+
+                                    <span>Documents</span>
+
+                                    <strong>
+                                        {{ report.documents }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div class="stat orange">
+
+                                    <i class="fas fa-fingerprint"></i>
+
+                                    <span>Evidence</span>
+
+                                    <strong>
+                                        {{ report.evidence }}
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ADDITIONAL INFORMATION -->
+
+                        <div class="inner-box"
+                             style="margin-top:16px;">
+
+                            <h3>
+
+                                <i class="fas fa-circle-info"></i>
+
+                                Additional Information
+
+                            </h3>
+
+
+                            <div class="info-list">
+
+                                <div>
+
+                                    <span>Report Status</span>
+
+                                    <strong>
+                                        Generated
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>Case Available</span>
+
+                                    <strong>
+                                        {{ 'Yes' if report.case_found else 'No' }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>Report Type</span>
+
+                                    <strong>
+                                        {{ report.report_type }}
+                                    </strong>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span>System</span>
+
+                                    <strong>
+                                        AI Courtroom
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- REPORT CONTENT -->
+
+            <section class="card">
+
+                <div class="section-heading">
+
+                    <h2>
+
+                        <i class="fas fa-file-lines"></i>
+
+                        Report Content
+
+                    </h2>
+
+                </div>
+
+
+                <div class="report-content">
+
+                    <h2>
+                        Case Report - {{ report.case_id }}
+                    </h2>
+
+                    <div class="subtitle">
+                        {{ report.case_name }}
+                    </div>
+
+
+                    <h4>
+                        1. Case Overview
+                    </h4>
+
+                    <p>
+                        {{ report.case_description }}
+                    </p>
+
+
+                    <h4>
+                        2. Case Information
+                    </h4>
+
+                    <ul>
+
+                        <li>
+                            Case ID: {{ report.case_id }}
+                        </li>
+
+                        <li>
+                            Case Type: {{ report.case_type }}
+                        </li>
+
+                        <li>
+                            Current Status: {{ report.case_status }}
+                        </li>
+
+                        <li>
+                            Selected Report: {{ report.report_type }}
+                        </li>
+
+                    </ul>
+
+
+                    <h4>
+                        3. System Statistics
+                    </h4>
+
+                    <ul>
+
+                        <li>
+                            Total registered cases:
+                            {{ report.cases }}
+                        </li>
+
+                        <li>
+                            Active cases:
+                            {{ report.active_cases }}
+                        </li>
+
+                        <li>
+                            Total documents:
+                            {{ report.documents }}
+                        </li>
+
+                        <li>
+                            Total evidence:
+                            {{ report.evidence }}
+                        </li>
+
+                    </ul>
+
+
+                    <h4>
+                        4. Legal Review Note
+                    </h4>
+
+                    <p>
+
+                        This report is generated for informational
+                        and organizational purposes. Review relevant
+                        documents, evidence, legal sections and case
+                        history before making legal decisions.
+
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            {% else %}
+
+
+            <!-- EMPTY STATE -->
+
+            <section class="card">
+
+                <div class="empty-state">
+
+                    <i class="fas fa-file-circle-question"></i>
+
+                    <p>
+                        <strong>No report generated yet.</strong>
+                    </p>
+
+                    <p>
+                        Select a case and report type,
+                        then click Generate Report.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            {% endif %}
+
+
+            <!-- LEGAL RECOMMENDATION -->
+
+            <section class="card legal-section">
+
+                <div class="section-heading">
+
+                    <h2>
+
+                        <i class="fas fa-scale-balanced"></i>
+
+                        Legal Recommendation
+
+                    </h2>
+
+                </div>
+
+
+                <div class="note">
+
+                    Review the relevant legal sections, case documents,
+                    supporting evidence and previous judgments before
+                    making decisions related to the case.
+
+                    <br><br>
+
+                    <strong>Note:</strong>
+
+                    This system provides informational legal assistance
+                    and does not replace professional legal advice.
+
+                </div>
+
+            </section>
+
+
+            <!-- EXPORT -->
+
+            <section class="card export-section">
+
+                <div class="section-heading">
+
+                    <h2>
+
+                        <i class="fas fa-download"></i>
+
+                        Export Report
+
+                    </h2>
+
+                </div>
+
+
+                <p style="font-size:13px;color:var(--muted);">
+
+                    Print or save the generated report as a PDF.
+
+                </p>
+
+
+                <div class="button-row">
+
+                    <button class="btn btn-primary"
+                            type="button"
+                            onclick="printReport()">
+
+                        <i class="fas fa-file-pdf"></i>
+
+                        Print / Save PDF
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <footer class="footer">
+
+                © 2026 AI Powered Courtroom Assistant
+
+            </footer>
+
+
+        </main>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script>
+
+        function printReport() {
+
+            window.print();
+
+        }
+
+
+        function clearForm() {
+
+            document.getElementById("case_id").value = "";
+
+            document.getElementById("report_type").value =
+                "Complete Case Report";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

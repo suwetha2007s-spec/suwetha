@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Voice Query | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .voice-page {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .voice-header {
+            margin-bottom: 25px;
+        }
+
+        .voice-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .voice-header p {
+            color: #777;
+        }
+
+        .voice-card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .microphone {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 10px auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 45px;
+            background: #f1ecff;
+        }
+
+        .voice-status {
+            font-weight: 600;
+            margin: 15px 0;
+        }
+
+        .voice-button {
+            border: none;
+            padding: 14px 30px;
+            border-radius: 10px;
+            background: #6c4df6;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .voice-button:hover {
+            opacity: 0.9;
+        }
+
+        .voice-button.stop {
+            background: #d9534f;
+        }
+
+        .result-box {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .result-box label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        #voiceText {
+            width: 100%;
+            min-height: 130px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .ask-button {
+            margin-top: 15px;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 9px;
+            background: #222;
+            color: white;
+            cursor: pointer;
+        }
+
+        .answer-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f8ff;
+            border-radius: 12px;
+            text-align: left;
+            display: none;
+        }
+
+        .answer-box h3 {
+            margin-top: 0;
+        }
+
+        .language-select {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Document</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+           
+            </a>
+
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            
+
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link active">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="navbar-right">
+
+               
+                
+
+                </button>
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+
+        <div class="page-content">
+
+            <div class="voice-page">
+
+                <div class="voice-header">
+
+                    <span class="welcome-small">
+                        VOICE QUERY
+                    </span>
+
+                    <h1>
+                        Ask Using Your Voice
+                    </h1>
+
+                    <p>
+                        Speak your legal question and convert your voice
+                        into text for the AI assistant.
+                    </p>
+
+                </div>
+
+
+                <div class="voice-card">
+
+                    <select id="voiceLanguage"
+                            class="language-select">
+
+                        <option value="en-IN">
+                            English
+                        </option>
+
+                        <option value="ta-IN">
+                            தமிழ்
+                        </option>
+
+                        <option value="hi-IN">
+                            हिन्दी
+                        </option>
+
+                    </select>
+
+
+                    <div class="microphone">
+                        🎙️
+                    </div>
+
+
+                    <h2>
+                        Voice Legal Assistant
+                    </h2>
+
+                    <p>
+                        Click the microphone and start speaking.
+                    </p>
+
+
+                    <div id="voiceStatus"
+                         class="voice-status">
+
+                        Ready to listen
+                    </div>
+
+
+                    <button
+                        id="startVoice"
+                        class="voice-button">
+
+                        🎙 Start Speaking
+
+                    </button>
+
+
+                    <div class="result-box">
+
+                        <label for="voiceText">
+                            Recognized Question
+                        </label>
+
+                        <textarea
+                            id="voiceText"
+                            placeholder="Your spoken question will appear here..."
+                        ></textarea>
+
+
+                        <button
+                            id="askVoice"
+                            class="ask-button">
+
+                            ✦ Ask AI Assistant
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="answerBox"
+                        class="answer-box">
+
+                        <h3>
+                            AI Response
+                        </h3>
+
+                        <p id="answerText">
+                            Your AI response will appear here.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script>
+
+let recognition = null;
+let isListening = false;
+
+const startButton =
+    document.getElementById("startVoice");
+
+const voiceText =
+    document.getElementById("voiceText");
+
+const voiceStatus =
+    document.getElementById("voiceStatus");
+
+const language =
+    document.getElementById("voiceLanguage");
+
+
+if ("webkitSpeechRecognition" in window ||
+    "SpeechRecognition" in window) {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    recognition = new SpeechRecognition();
+
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = function() {
+
+        isListening = true;
+
+        startButton.innerText =
+            "⏹ Stop Listening";
+
+        startButton.classList.add("stop");
+
+        voiceStatus.innerText =
+            "Listening... Please speak your question.";
+
+    };
+
+
+    recognition.onresult = function(event) {
+
+        const transcript =
+            event.results[0][0].transcript;
+
+        voiceText.value = transcript;
+
+        voiceStatus.innerText =
+            "Voice captured successfully.";
+
+    };
+
+
+    recognition.onerror = function(event) {
+
+        voiceStatus.innerText =
+            "Voice recognition error: " +
+            event.error;
+
+    };
+
+
+    recognition.onend = function() {
+
+        isListening = false;
+
+        startButton.innerText =
+            "🎙 Start Speaking";
+
+        startButton.classList.remove("stop");
+
+    };
+
+
+    startButton.addEventListener(
+        "click",
+        function() {
+
+            if (isListening) {
+
+                recognition.stop();
+
+                return;
+
+            }
+
+            recognition.lang =
+                language.value;
+
+            recognition.start();
+
+        }
+    );
+
+} else {
+
+    startButton.disabled = true;
+
+    voiceStatus.innerText =
+        "Voice recognition is not supported by this browser.";
+
+}
+
+
+/* ASK AI */
+
+document.getElementById("askVoice")
+    .addEventListener("click", async function() {
+
+        const question =
+            voiceText.value.trim();
+
+        if (!question) {
+
+            alert(
+                "Please speak or type a legal question first."
+            );
+
+            return;
+
+        }
+
+        const answerBox =
+            document.getElementById("answerBox");
+
+        const answerText =
+            document.getElementById("answerText");
+
+        answerBox.style.display =
+            "block";
+
+        answerText.innerText =
+            "AI is processing your question...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "{{ url_for('voice_ai_response') }}",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/x-www-form-urlencoded"
+                        },
+
+                        body:
+                            "question=" +
+                            encodeURIComponent(question)
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                answerText.innerText =
+                    data.answer;
+
+            } else {
+
+                answerText.innerText =
+                    data.answer ||
+                    "Unable to generate a response.";
+
+            }
+
+        } catch (error) {
+
+            answerText.innerText =
+                "Unable to connect to the AI assistant.";
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

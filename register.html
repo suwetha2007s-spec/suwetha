@@ -1,0 +1,965 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* =====================================================
+           REGISTER PAGE
+           ===================================================== */
+
+        .register-page {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            background: #f5f7fb;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 950px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            background: #ffffff;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow: 0 12px 40px rgba(20, 35, 70, 0.10);
+        }
+
+        /* =====================================================
+           LEFT SIDE
+           ===================================================== */
+
+        .register-intro {
+            padding: 50px 45px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            background: #3157d5;
+            color: #ffffff;
+        }
+
+        .register-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin-bottom: 32px;
+        }
+
+        .register-brand-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 255, 255, 0.16);
+
+            border-radius: 12px;
+
+            font-size: 25px;
+        }
+
+        .register-brand h2 {
+            font-size: 18px;
+        }
+
+        .register-brand p {
+            margin-top: 3px;
+
+            color: rgba(255, 255, 255, 0.75);
+
+            font-size: 11px;
+        }
+
+        .register-intro h1 {
+            font-size: 29px;
+            line-height: 1.3;
+
+            margin-bottom: 13px;
+        }
+
+        .register-intro > p {
+            color: rgba(255, 255, 255, 0.82);
+
+            font-size: 13px;
+            line-height: 1.8;
+
+            max-width: 370px;
+        }
+
+        .register-features {
+            margin-top: 30px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+        }
+
+        .register-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: rgba(255, 255, 255, 0.9);
+
+            font-size: 11px;
+        }
+
+        .register-feature-icon {
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 255, 255, 0.13);
+
+            border-radius: 7px;
+        }
+
+        /* =====================================================
+           RIGHT SIDE
+           ===================================================== */
+
+        .register-form-section {
+            padding: 45px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .register-form-header {
+            margin-bottom: 23px;
+        }
+
+        .register-form-header h2 {
+            font-size: 24px;
+            color: #182033;
+        }
+
+        .register-form-header p {
+            margin-top: 7px;
+
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        .register-form {
+            width: 100%;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            gap: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #9ca3af;
+
+            font-size: 15px;
+
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 43px;
+
+            padding: 0 13px 0 39px;
+
+            border: 1px solid #dfe3eb;
+            border-radius: 9px;
+
+            background: #ffffff;
+
+            color: #182033;
+
+            font-size: 12px;
+
+            outline: none;
+
+            transition: 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3157d5;
+
+            box-shadow: 0 0 0 3px rgba(49, 87, 213, 0.08);
+        }
+
+        .form-input::placeholder {
+            color: #a1a7b3;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #8b93a4;
+
+            font-size: 15px;
+        }
+
+        .terms-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+
+            margin: 5px 0 18px;
+
+            color: #6b7280;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+        }
+
+        .terms-row input {
+            margin-top: 2px;
+
+            accent-color: #3157d5;
+        }
+
+        .terms-row a {
+            color: #3157d5;
+
+            font-weight: 600;
+        }
+
+        .terms-row a:hover {
+            text-decoration: underline;
+        }
+
+        .register-button {
+            width: 100%;
+            height: 44px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #3157d5;
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .register-button:hover {
+            background: #2445b5;
+
+            transform: translateY(-1px);
+        }
+
+        .login-text {
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 11px;
+        }
+
+        .login-text a {
+            color: #3157d5;
+
+            font-weight: 600;
+        }
+
+        .login-text a:hover {
+            text-decoration: underline;
+        }
+
+        .register-error {
+            margin-bottom: 15px;
+
+            padding: 10px 12px;
+
+            background: #fff1f2;
+
+            border: 1px solid #fecdd3;
+
+            border-radius: 8px;
+
+            color: #be123c;
+
+            font-size: 10px;
+        }
+
+        .register-success {
+            margin-bottom: 15px;
+
+            padding: 10px 12px;
+
+            background: #f0fdf4;
+
+            border: 1px solid #bbf7d0;
+
+            border-radius: 8px;
+
+            color: #15803d;
+
+            font-size: 10px;
+        }
+
+        .register-disclaimer {
+            margin-top: 20px;
+
+            padding-top: 15px;
+
+            border-top: 1px solid #eef0f4;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            line-height: 1.6;
+
+            text-align: center;
+        }
+
+        /* =====================================================
+           MOBILE
+           ===================================================== */
+
+        @media (max-width: 750px) {
+
+            .register-page {
+                padding: 18px;
+            }
+
+            .register-container {
+                grid-template-columns: 1fr;
+
+                max-width: 500px;
+            }
+
+            .register-intro {
+                padding: 35px 30px;
+            }
+
+            .register-intro h1 {
+                font-size: 25px;
+            }
+
+            .register-features {
+                margin-top: 22px;
+            }
+
+            .register-form-section {
+                padding: 35px 30px;
+            }
+        }
+
+        @media (max-width: 480px) {
+
+            .register-page {
+                padding: 10px;
+            }
+
+            .register-intro,
+            .register-form-section {
+                padding: 28px 22px;
+            }
+
+            .register-intro h1 {
+                font-size: 22px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="register-page">
+
+    <div class="register-container">
+
+        <!-- =================================================
+             LEFT INTRODUCTION
+             ================================================= -->
+
+        <section class="register-intro">
+
+            <div class="register-brand">
+
+                <div class="register-brand-icon">
+                    ⚖
+                </div>
+
+                <div>
+                    <h2>AI Courtroom</h2>
+                    <p>Legal Assistant</p>
+                </div>
+
+            </div>
+
+
+            <h1>
+                Create Your Account
+            </h1>
+
+            <p>
+                Join the AI Powered Courtroom Assistant and manage
+                your legal cases, documents, evidence and important
+                courtroom information from one place.
+            </p>
+
+
+            <div class="register-features">
+
+                <div class="register-feature">
+
+                    <div class="register-feature-icon">
+                        ✦
+                    </div>
+
+                    <span>
+                        AI-powered legal assistance
+                    </span>
+
+                </div>
+
+
+                <div class="register-feature">
+
+                    <div class="register-feature-icon">
+                        ▤
+                    </div>
+
+                    <span>
+                        Legal document management
+                    </span>
+
+                </div>
+
+
+                <div class="register-feature">
+
+                    <div class="register-feature-icon">
+                        ◈
+                    </div>
+
+                    <span>
+                        Evidence organization
+                    </span>
+
+                </div>
+
+
+                <div class="register-feature">
+
+                    <div class="register-feature-icon">
+                        ◫
+                    </div>
+
+                    <span>
+                        Smart case tracking
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             REGISTRATION FORM
+             ================================================= -->
+
+        <section class="register-form-section">
+
+            <div class="register-form-header">
+
+                <h2>
+                    Create Account
+                </h2>
+
+                <p>
+                    Enter your details to create your account.
+                </p>
+
+            </div>
+
+
+            <!-- Flask messages -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="register-error">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form
+                class="register-form"
+                method="POST"
+                action="{{ url_for('register') }}"
+            >
+
+                <!-- NAME + USERNAME -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="fullname">
+                            Full Name
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                ◉
+                            </span>
+
+                            <input
+                                type="text"
+                                id="fullname"
+                                name="fullname"
+                                class="form-input"
+                                placeholder="Enter your full name"
+                                autocomplete="name"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="username">
+                            Username
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                @
+                            </span>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                class="form-input"
+                                placeholder="Choose username"
+                                autocomplete="username"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            @
+                        </span>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            class="form-input"
+                            placeholder="Enter your email address"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- ROLE -->
+
+                <div class="form-group">
+
+                    <label for="role">
+                        User Role
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ◈
+                        </span>
+
+                        <select
+                            id="role"
+                            name="role"
+                            class="form-input"
+                            required
+                        >
+
+                            <option value="">
+                                Select your role
+                            </option>
+
+                            <option value="user">
+                                General User
+                            </option>
+
+                            <option value="student">
+                                Law Student
+                            </option>
+
+                            <option value="legal_assistant">
+                                Legal Assistant
+                            </option>
+
+                            <option value="lawyer">
+                                Lawyer
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="password">
+                            Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                ●
+                            </span>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="form-input"
+                                placeholder="Create password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                id="passwordToggle"
+                                aria-label="Show password"
+                            >
+                                ◉
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="confirm_password">
+                            Confirm Password
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                ●
+                            </span>
+
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                class="form-input"
+                                placeholder="Confirm password"
+                                autocomplete="new-password"
+                                required
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <label class="terms-row">
+
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        name="terms"
+                        required
+                    >
+
+                    <span>
+                        I agree to the
+                        <a href="#" onclick="return false;">
+                            Terms of Use
+                        </a>
+                        and
+                        <a href="#" onclick="return false;">
+                            Privacy Policy
+                        </a>.
+                    </span>
+
+                </label>
+
+
+                <!-- REGISTER -->
+
+                <button
+                    type="submit"
+                    class="register-button"
+                >
+                    Create Account
+                </button>
+
+            </form>
+
+
+            <!-- LOGIN LINK -->
+
+            <div class="login-text">
+
+                Already have an account?
+
+                <a href="{{ url_for('login') }}">
+                    Sign In
+                </a>
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="register-disclaimer">
+
+                AI Powered Courtroom Assistant provides
+                informational assistance and is not a substitute
+                for professional legal advice.
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       PASSWORD SHOW / HIDE
+       ===================================================== */
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const confirmPasswordInput =
+        document.getElementById("confirm_password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+
+    if (passwordToggle && passwordInput) {
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                if (passwordInput.type === "password") {
+
+                    passwordInput.type = "text";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    passwordInput.type = "password";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       PASSWORD MATCH CHECK
+       ===================================================== */
+
+    const registerForm =
+        document.querySelector(".register-form");
+
+
+    if (registerForm) {
+
+        registerForm.addEventListener(
+            "submit",
+            function (event) {
+
+                const password =
+                    passwordInput
+                        ? passwordInput.value
+                        : "";
+
+                const confirmPassword =
+                    confirmPasswordInput
+                        ? confirmPasswordInput.value
+                        : "";
+
+
+                if (password !== confirmPassword) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Password and Confirm Password do not match."
+                    );
+
+                    if (confirmPasswordInput) {
+                        confirmPasswordInput.focus();
+                    }
+
+                    return;
+                }
+
+
+                if (password.length < 6) {
+
+                    event.preventDefault();
+
+                    alert(
+                        "Password must contain at least 6 characters."
+                    );
+
+                    if (passwordInput) {
+                        passwordInput.focus();
+                    }
+
+                }
+
+            }
+        );
+
+    }
+
+</script>
+
+</body>
+</html>

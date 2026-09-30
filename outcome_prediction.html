@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Outcome Prediction - AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_documents') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Documents</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            <a href="{{ url_for('ai_case_summary') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>AI Case Summary</span>
+            </a>
+
+            <a href="{{ url_for('legal_section') }}" class="sidebar-link">
+                <span>§</span>
+                <span>Legal Section Recommendation</span>
+            </a>
+
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            <a href="{{ url_for('smart_search') }}" class="sidebar-link">
+                <span>⌕</span>
+                <span>Smart Search</span>
+            </a>
+
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link active">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                <select id="languageSelector"
+                        class="language-selector">
+
+                    <option value="en">English</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="hi">हिन्दी</option>
+
+                </select>
+
+
+               <a
+    href="{{ url_for('notifications') }}"
+    class="notifications-button"
+    id="notificationButton"
+>
+    🔔
+    <span class="notifications-count">3</span>
+</a> 
+
+                    <span class="notification-count">
+                        3
+                    </span>
+
+                </button>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE CONTENT ================= -->
+
+        <div class="page-content">
+
+            <!-- PAGE HEADER -->
+
+            <section class="welcome-section">
+
+                <div>
+
+                    <span class="welcome-small">
+                        AI POWERED LEGAL ANALYSIS
+                    </span>
+
+                    <h1>
+                        Case Outcome Prediction
+                    </h1>
+
+                    <p>
+                        Analyze case information and generate
+                        an estimated outcome based on available
+                        case factors.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= PREDICTION CARD ================= -->
+
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Predict Case Outcome
+                        </h3>
+
+                        <p>
+                            Enter the available case information below.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div style="padding: 25px;">
+
+                    <form id="predictionForm">
+
+                        <!-- CASE TYPE -->
+
+                        <div style="margin-bottom:20px;">
+
+                            <label>
+                                <strong>Case Type</strong>
+                            </label>
+
+                            <select
+                                id="caseType"
+                                style="width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ddd;">
+
+                                <option value="">
+                                    Select Case Type
+                                </option>
+
+                                <option value="criminal">
+                                    Criminal
+                                </option>
+
+                                <option value="civil">
+                                    Civil
+                                </option>
+
+                                <option value="family">
+                                    Family
+                                </option>
+
+                                <option value="property">
+                                    Property
+                                </option>
+
+                                <option value="consumer">
+                                    Consumer
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- EVIDENCE -->
+
+                        <div style="margin-bottom:20px;">
+
+                            <label>
+                                <strong>Evidence Strength</strong>
+                            </label>
+
+                            <select
+                                id="evidenceStrength"
+                                style="width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ddd;">
+
+                                <option value="">
+                                    Select Evidence Strength
+                                </option>
+
+                                <option value="strong">
+                                    Strong
+                                </option>
+
+                                <option value="medium">
+                                    Medium
+                                </option>
+
+                                <option value="weak">
+                                    Weak
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- DOCUMENTS -->
+
+                        <div style="margin-bottom:20px;">
+
+                            <label>
+                                <strong>Supporting Documents</strong>
+                            </label>
+
+                            <select
+                                id="documents"
+                                style="width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ddd;">
+
+                                <option value="">
+                                    Select Document Availability
+                                </option>
+
+                                <option value="complete">
+                                    Complete
+                                </option>
+
+                                <option value="partial">
+                                    Partially Available
+                                </option>
+
+                                <option value="limited">
+                                    Limited
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- CASE STATUS -->
+
+                        <div style="margin-bottom:20px;">
+
+                            <label>
+                                <strong>Current Case Status</strong>
+                            </label>
+
+                            <select
+                                id="caseStatus"
+                                style="width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ddd;">
+
+                                <option value="">
+                                    Select Status
+                                </option>
+
+                                <option value="active">
+                                    Active
+                                </option>
+
+                                <option value="hearing">
+                                    Hearing
+                                </option>
+
+                                <option value="pending">
+                                    Pending
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <!-- CASE DETAILS -->
+
+                        <div style="margin-bottom:20px;">
+
+                            <label>
+                                <strong>Case Details</strong>
+                            </label>
+
+                            <textarea
+                                id="caseDetails"
+                                rows="5"
+                                placeholder="Enter important case facts, evidence details and other relevant information..."
+                                style="width:100%; padding:12px; margin-top:8px; border-radius:8px; border:1px solid #ddd; resize:vertical;"></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            class="primary-button"
+                            onclick="predictOutcome()">
+
+                            ◉ Predict Case Outcome
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= RESULT ================= -->
+
+            <section
+                class="dashboard-card"
+                id="predictionResult"
+                style="margin-top:25px; display:none;">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Prediction Result
+                        </h3>
+
+                        <p>
+                            AI-generated informational assessment
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div style="padding:25px;">
+
+                    <div style="text-align:center; margin-bottom:25px;">
+
+                        <div
+                            id="resultIcon"
+                            style="font-size:50px;">
+
+                            ◉
+
+                        </div>
+
+                        <h2 id="resultTitle">
+                            Outcome Assessment
+                        </h2>
+
+                        <p id="resultText">
+                            Prediction will appear here.
+                        </p>
+
+                    </div>
+
+
+                    <div class="stats-grid">
+
+                        <div class="stat-card">
+
+                            <div class="stat-card-icon">
+                                ◉
+                            </div>
+
+                            <div class="stat-card-content">
+
+                                <span>
+                                    Estimated Outcome
+                                </span>
+
+                                <h2 id="outcomeValue">
+                                    —
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="stat-card">
+
+                            <div class="stat-card-icon">
+                                %
+                            </div>
+
+                            <div class="stat-card-content">
+
+                                <span>
+                                    Confidence
+                                </span>
+
+                                <h2 id="confidenceValue">
+                                    —
+                                </h2>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div style="margin-top:25px; padding:18px; border-radius:10px; background:#f7f7f7;">
+
+                        <strong>
+                            Important Notice
+                        </strong>
+
+                        <p>
+                            This prediction is an informational estimate
+                            generated from the information entered into
+                            the system. It is not a guaranteed court
+                            outcome and should not be treated as legal advice.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= INFORMATION ================= -->
+
+            <section class="dashboard-card" style="margin-top:25px;">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            How Outcome Prediction Works
+                        </h3>
+
+                        <p>
+                            Factors considered by the assistant
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div style="padding:25px;">
+
+                    <div class="module-grid">
+
+                        <div class="module-card">
+
+                            <div class="module-icon">
+                                ◈
+                            </div>
+
+                            <h3>
+                                Evidence
+                            </h3>
+
+                            <p>
+                                Considers the available strength
+                                and relevance of evidence.
+                            </p>
+
+                        </div>
+
+
+                        <div class="module-card">
+
+                            <div class="module-icon">
+                                ▤
+                            </div>
+
+                            <h3>
+                                Documents
+                            </h3>
+
+                            <p>
+                                Considers supporting legal documents
+                                and case records.
+                            </p>
+
+                        </div>
+
+
+                        <div class="module-card">
+
+                            <div class="module-icon">
+                                ◫
+                            </div>
+
+                            <h3>
+                                Case Status
+                            </h3>
+
+                            <p>
+                                Considers the current stage and
+                                progress of the case.
+                            </p>
+
+                        </div>
+
+
+                        <div class="module-card">
+
+                            <div class="module-icon">
+                                ✦
+                            </div>
+
+                            <h3>
+                                Case Details
+                            </h3>
+
+                            <p>
+                                Uses the information provided about
+                                the case for assessment.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="legal-disclaimer"
+                 style="margin-top:25px;">
+
+                <strong>
+                    Important Legal Notice
+                </strong>
+
+                <p>
+                    The Case Outcome Prediction module provides
+                    AI-based informational assistance only. Actual
+                    court outcomes depend on applicable law, evidence,
+                    arguments, judicial findings and many other factors.
+                    Always consult a qualified legal professional for
+                    important legal decisions.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script>
+
+function predictOutcome() {
+
+    const caseType =
+        document.getElementById("caseType").value;
+
+    const evidence =
+        document.getElementById("evidenceStrength").value;
+
+    const documents =
+        document.getElementById("documents").value;
+
+    const status =
+        document.getElementById("caseStatus").value;
+
+    const details =
+        document.getElementById("caseDetails").value.trim();
+
+
+    if (!caseType ||
+        !evidence ||
+        !documents ||
+        !status) {
+
+        alert(
+            "Please select all required case information."
+        );
+
+        return;
+    }
+
+
+    let score = 50;
+
+
+    if (evidence === "strong") {
+        score += 25;
+    }
+
+    if (evidence === "medium") {
+        score += 10;
+    }
+
+    if (evidence === "weak") {
+        score -= 20;
+    }
+
+
+    if (documents === "complete") {
+        score += 15;
+    }
+
+    if (documents === "partial") {
+        score += 5;
+    }
+
+    if (documents === "limited") {
+        score -= 15;
+    }
+
+
+    if (details.length > 100) {
+        score += 5;
+    }
+
+
+    if (score > 90) {
+        score = 90;
+    }
+
+    if (score < 20) {
+        score = 20;
+    }
+
+
+    let outcome;
+
+    if (score >= 70) {
+
+        outcome =
+            "Favourable Outcome Indicators";
+
+    } else if (score >= 50) {
+
+        outcome =
+            "Moderate / Uncertain Outcome";
+
+    } else {
+
+        outcome =
+            "Higher Risk Outcome Indicators";
+
+    }
+
+
+    document.getElementById(
+        "outcomeValue"
+    ).innerText = outcome;
+
+
+    document.getElementById(
+        "confidenceValue"
+    ).innerText = score + "%";
+
+
+    document.getElementById(
+        "resultTitle"
+    ).innerText = outcome;
+
+
+    document.getElementById(
+        "resultText"
+    ).innerText =
+        "The assessment is based on the case information currently provided.";
+
+
+    document.getElementById(
+        "predictionResult"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "predictionResult"
+    ).scrollIntoView({
+        behavior: "smooth"
+    });
+
+}
+
+</script>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

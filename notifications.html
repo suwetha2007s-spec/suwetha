@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Notifications | AI Powered Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #202938;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            background: #172554;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            padding: 25px 16px;
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .logo i {
+            font-size: 27px;
+            color: #93c5fd;
+        }
+
+        .logo h2 {
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .logo span {
+            display: block;
+            font-size: 11px;
+            color: #bfdbfe;
+            margin-top: 3px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            margin-top: 28px;
+        }
+
+        .nav-menu li {
+            margin-bottom: 9px;
+        }
+
+        .nav-menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 15px;
+            color: #dbeafe;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .nav-menu a i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* ================= MAIN CONTENT ================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 78px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 35px;
+        }
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-heading i {
+            color: #2563eb;
+            font-size: 23px;
+        }
+
+        .page-heading h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .page-heading p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .profile-details strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .profile-details span {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        /* ================= PAGE BODY ================= */
+
+        .page-body {
+            padding: 32px 35px;
+        }
+
+        .welcome-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .welcome-section h2 {
+            font-size: 25px;
+            color: #111827;
+        }
+
+        .welcome-section p {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 7px;
+        }
+
+        .date-label {
+            background: white;
+            padding: 11px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* ================= SUMMARY CARDS ================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 13px;
+            padding: 22px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.03);
+        }
+
+        .summary-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .blue-icon {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .orange-icon {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .green-icon {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .purple-icon {
+            background: #f3e8ff;
+            color: #9333ea;
+        }
+
+        .summary-card h3 {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            margin-top: 17px;
+        }
+
+        .summary-card h1 {
+            font-size: 29px;
+            color: #111827;
+            margin-top: 8px;
+        }
+
+        .summary-card small {
+            display: block;
+            margin-top: 7px;
+            color: #94a3b8;
+            font-size: 11px;
+        }
+
+        /* ================= NOTIFICATION PANEL ================= */
+
+        .content-card {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 13px;
+            box-shadow: 0 3px 12px rgba(15,23,42,0.03);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 23px 25px;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .card-title i {
+            color: #2563eb;
+            font-size: 19px;
+        }
+
+        .card-title h2 {
+            font-size: 17px;
+            color: #111827;
+        }
+
+        .notification-badge {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ================= NOTIFICATION ITEM ================= */
+
+        .notification-list {
+            padding: 0 25px;
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 17px;
+            padding: 23px 5px;
+            border-bottom: 1px solid #eef2f7;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background: #f8fbff;
+        }
+
+        .notification-icon {
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            border-radius: 11px;
+            background: #dbeafe;
+            color: #2563eb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 17px;
+        }
+
+        .notification-info {
+            flex: 1;
+        }
+
+        .notification-info h3 {
+            font-size: 14px;
+            color: #1e293b;
+            margin-bottom: 7px;
+        }
+
+        .notification-info p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .notification-time {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 8px;
+            display: block;
+        }
+
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            background: #2563eb;
+            border-radius: 50%;
+            margin-top: 7px;
+            flex-shrink: 0;
+        }
+
+        .read-label {
+            color: #94a3b8;
+            font-size: 11px;
+            margin-top: 7px;
+            display: block;
+        }
+
+        /* ================= EMPTY STATE ================= */
+
+        .empty-state {
+            text-align: center;
+            padding: 65px 20px;
+        }
+
+        .empty-state i {
+            font-size: 55px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            color: #334155;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions-section {
+            padding: 23px 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .action-form {
+            display: inline-block;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 17px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-danger:hover {
+            background: #fecaca;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1100px) {
+
+            .summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 20px 8px;
+            }
+
+            .logo h2,
+            .logo span,
+            .nav-menu a span {
+                display: none;
+            }
+
+            .logo {
+                justify-content: center;
+                padding: 8px 0 25px;
+            }
+
+            .nav-menu a {
+                justify-content: center;
+                padding: 14px 5px;
+            }
+
+            .main-content {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+            }
+
+            .topbar {
+                padding: 0 18px;
+            }
+
+            .page-heading h1 {
+                font-size: 17px;
+            }
+
+            .profile-details {
+                display: none;
+            }
+
+            .page-body {
+                padding: 22px 17px;
+            }
+
+            .welcome-section {
+                display: block;
+            }
+
+            .date-label {
+                display: inline-block;
+                margin-top: 15px;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .summary-card {
+                padding: 17px;
+            }
+
+            .card-header {
+                padding: 18px;
+            }
+
+            .notification-list {
+                padding: 0 17px;
+            }
+
+            .actions-section {
+                padding: 18px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .notification-item {
+                gap: 11px;
+            }
+
+            .notification-icon {
+                width: 37px;
+                height: 37px;
+                font-size: 14px;
+            }
+
+            .notification-info p {
+                font-size: 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <i class="fas fa-scale-balanced"></i>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <span>Legal Assistant</span>
+            </div>
+
+        </div>
+
+
+        <ul class="nav-menu">
+
+           
+            
+
+        </ul>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="page-heading">
+
+                <i class="fas fa-bell"></i>
+
+                <div>
+                    <h1>Notification Center</h1>
+                    <p>Stay updated with your legal activities</p>
+                </div>
+
+            </div>
+
+
+            <div class="profile">
+
+                <div class="profile-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div class="profile-details">
+                    <strong>Legal User</strong>
+                    <span>AI Courtroom Assistant</span>
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE BODY -->
+
+        <section class="page-body">
+
+
+            <!-- WELCOME -->
+
+            <div class="welcome-section">
+
+                <div>
+
+                    <h2>Notifications</h2>
+
+                    <p>
+                        Manage your hearing reminders, case alerts and legal updates.
+                    </p>
+
+                </div>
+
+
+                <div class="date-label">
+
+                    <i class="far fa-calendar"></i>
+                    Notification Center
+
+                </div>
+
+            </div>
+
+
+            <!-- SUMMARY CARDS -->
+
+            <div class="summary-grid">
+
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon blue-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+
+                    </div>
+
+                    <h3>Total Notifications</h3>
+
+                    <h1>{{ total_notifications|default(0) }}</h1>
+
+                    <small>All received notifications</small>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon orange-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+
+                    </div>
+
+                    <h3>Unread Alerts</h3>
+
+                    <h1>{{ unread_notifications|default(0) }}</h1>
+
+                    <small>Notifications requiring attention</small>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon green-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+
+                    </div>
+
+                    <h3>Hearing Reminders</h3>
+
+                    <h1>—</h1>
+
+                    <small>Recorded hearing updates</small>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <div class="summary-top">
+
+                        <div class="summary-icon purple-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+
+                    </div>
+
+                    <h3>AI Alerts</h3>
+
+                    <h1>—</h1>
+
+                    <small>AI-generated notifications</small>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- NOTIFICATION LIST -->
+
+            <div class="content-card">
+
+
+                <div class="card-header">
+
+                    <div class="card-title">
+
+                        <i class="fas fa-list-check"></i>
+
+                        <h2>Recent Notifications</h2>
+
+                    </div>
+
+
+                    <span class="notification-badge">
+
+                        {{ notifications|length }} Notifications
+
+                    </span>
+
+                </div>
+
+
+                <div class="notification-list">
+
+
+                    {% if notifications %}
+
+
+                        {% for item in notifications %}
+
+
+                            <div class="notification-item
+                                {% if item['is_read'] == 0 %}unread{% endif %}">
+
+
+                                <div class="notification-icon">
+
+                                    {% if 'hearing' in item['title']|lower
+                                          or 'reminder' in item['title']|lower %}
+
+                                        <i class="fas fa-calendar-check"></i>
+
+                                    {% elif 'document' in item['title']|lower %}
+
+                                        <i class="fas fa-file-circle-check"></i>
+
+                                    {% elif 'risk' in item['title']|lower
+                                          or 'alert' in item['title']|lower %}
+
+                                        <i class="fas fa-triangle-exclamation"></i>
+
+                                    {% else %}
+
+                                        <i class="fas fa-bell"></i>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="notification-info">
+
+                                    <h3>
+                                        {{ item['title'] }}
+                                    </h3>
+
+
+                                    <p>
+                                        {{ item['message'] }}
+                                    </p>
+
+
+                                    <span class="notification-time">
+
+                                        <i class="far fa-clock"></i>
+
+                                        {{ item['created_at'] }}
+
+                                    </span>
+
+                                </div>
+
+
+                                {% if item['is_read'] == 0 %}
+
+                                    <span class="unread-dot"></span>
+
+                                {% else %}
+
+                                    <span class="read-label">Read</span>
+
+                                {% endif %}
+
+
+                            </div>
+
+
+                        {% endfor %}
+
+
+                    {% else %}
+
+
+                        <div class="empty-state">
+
+                            <i class="far fa-bell-slash"></i>
+
+                            <h3>No Notifications Available</h3>
+
+                            <p>
+                                You are all caught up. New notifications will appear here.
+                            </p>
+
+                        </div>
+
+
+                    {% endif %}
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="content-card">
+
+
+                <div class="card-header">
+
+                    <div class="card-title">
+
+                        <i class="fas fa-sliders"></i>
+
+                        <h2>Notification Actions</h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="actions-section">
+
+
+                    <form class="action-form"
+                          method="POST"
+                          action="{{ url_for('mark_notifications_read') }}"
+                          onsubmit="return confirm('Mark all notifications as read?');">
+
+                        <button type="submit" class="btn btn-primary">
+
+                            <i class="fas fa-check-double"></i>
+
+                            Mark All As Read
+
+                        </button>
+
+                    </form>
+
+
+                    <form class="action-form"
+                          method="POST"
+                          action="{{ url_for('clear_notifications') }}"
+                          onsubmit="return confirm('Are you sure you want to clear all notifications?');">
+
+                        <button type="submit" class="btn btn-danger">
+
+                            <i class="fas fa-trash"></i>
+
+                            Clear Notifications
+
+                        </button>
+
+                    </form>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- AI SMART ALERTS -->
+
+            <div class="content-card">
+
+
+                <div class="card-header">
+
+                    <div class="card-title">
+
+                        <i class="fas fa-brain"></i>
+
+                        <h2>AI Smart Alerts</h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="notification-list">
+
+
+                    <div class="notification-item">
+
+                        <div class="notification-icon">
+
+                            <i class="fas fa-robot"></i>
+
+                        </div>
+
+
+                        <div class="notification-info">
+
+                            <h3>AI Notification Monitoring</h3>
+
+                            <p>
+                                Notifications created by the AI assistant
+                                will be displayed in the notification center.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="notification-item">
+
+                        <div class="notification-icon">
+
+                            <i class="fas fa-shield-halved"></i>
+
+                        </div>
+
+
+                        <div class="notification-info">
+
+                            <h3>Legal Case Updates</h3>
+
+                            <p>
+                                Review important case updates and hearing
+                                reminders when they are added to your account.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+        <!-- FOOTER -->
+
+        <footer class="footer">
+
+            © 2026 AI Powered Courtroom Assistant
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+</body>
+
+</html>

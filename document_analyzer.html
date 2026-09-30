@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Document Analyzer - AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .analyzer-page {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            margin: 8px 0;
+        }
+
+        .page-heading p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+        .analyzer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22px;
+        }
+
+        .analyzer-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .analyzer-card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-area:hover {
+            border-color: #64748b;
+            background: #f8fafc;
+        }
+
+        .upload-icon {
+            font-size: 45px;
+            margin-bottom: 12px;
+        }
+
+        .upload-area h3 {
+            margin-bottom: 8px;
+        }
+
+        .upload-area p {
+            color: #6b7280;
+            margin-bottom: 18px;
+        }
+
+        #documentFile {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            display: none;
+            word-break: break-word;
+        }
+
+        .analysis-options {
+            margin-top: 22px;
+        }
+
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .option input {
+            width: 17px;
+            height: 17px;
+        }
+
+        .full-button {
+            width: 100%;
+            margin-top: 18px;
+        }
+
+        .full-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-card {
+            margin-top: 22px;
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .result-header h2 {
+            margin: 0;
+        }
+
+        .status-badge {
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: #e2e8f0;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-loading {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .result-section {
+            margin-bottom: 22px;
+        }
+
+        .result-section h3 {
+            margin-bottom: 8px;
+        }
+
+        .result-section p {
+            color: #4b5563;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 17px;
+        }
+
+        .result-box span {
+            display: block;
+            color: #6b7280;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .result-box strong {
+            font-size: 18px;
+            word-break: break-word;
+        }
+
+        .finding-list {
+            padding-left: 20px;
+            color: #4b5563;
+            line-height: 1.8;
+        }
+
+        .finding-list li {
+            margin-bottom: 8px;
+        }
+
+        .raw-analysis {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 18px;
+            white-space: pre-wrap;
+            line-height: 1.7;
+            color: #374151;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .loading-message {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .disclaimer {
+            margin-top: 22px;
+        }
+
+        @media (max-width: 850px) {
+
+            .analyzer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-heading {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- ================================================= -->
+    <!-- SIDEBAR -->
+    <!-- ================================================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a href="{{ url_for('ask') }}"
+               class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+
+            <a href="{{ url_for('legal_document') }}"
+               class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Document</span>
+            </a>
+
+
+            <a href="{{ url_for('evidence_manager') }}"
+               class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+
+            <a href="{{ url_for('case_tracker') }}"
+               class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+
+            <a href="{{ url_for('ranking') }}"
+               class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+
+            
+
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link active">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+
+           
+
+
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyzer</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+                <span>⇥</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================================================= -->
+    <!-- MAIN CONTENT -->
+    <!-- ================================================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle"
+                        id="menuToggle">
+                    ☰
+                </button>
+
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+
+                
+
+
+                <!-- FIXED NOTIFICATION BUTTON -->
+
+                
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+
+                        {{ session.get('username', 'S')[0]|upper }}
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong>
+
+                            {{ session.get('username', 'Suwetha') }}
+
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================================================= -->
+        <!-- PAGE CONTENT -->
+        <!-- ================================================= -->
+
+        <div class="page-content">
+
+
+            <div class="analyzer-page">
+
+
+                <!-- PAGE HEADING -->
+
+                <div class="page-heading">
+
+                    <div>
+
+                        <span class="welcome-small">
+                            AI POWERED DOCUMENT ANALYSIS
+                        </span>
+
+                        <h1>
+                            AI Document Analyzer
+                        </h1>
+
+                        <p>
+                            Upload a legal document and analyze its
+                            contents, important information and possible
+                            areas requiring attention.
+                        </p>
+
+                    </div>
+
+
+                    <a href="{{ url_for('legal_document') }}"
+                       class="secondary-button">
+
+                        ← Legal Document
+
+                    </a>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- ANALYZER GRID -->
+                <!-- ================================================= -->
+
+                <div class="analyzer-grid">
+
+
+                    <!-- UPLOAD CARD -->
+
+                    <div class="analyzer-card">
+
+                        <h2>
+                            Upload Document
+                        </h2>
+
+                        <p class="card-description">
+
+                            Select a legal document from your computer.
+                            Supported formats include PDF, DOCX and TXT.
+
+                        </p>
+
+
+                        <label
+                            for="documentFile"
+                            class="upload-area">
+
+                            <div class="upload-icon">
+                                📄
+                            </div>
+
+                            <h3>
+                                Choose Legal Document
+                            </h3>
+
+                            <p>
+                                Click here to select a document
+                            </p>
+
+                            <span class="secondary-button">
+                                Browse Files
+                            </span>
+
+                        </label>
+
+
+                        <input
+                            type="file"
+                            id="documentFile"
+                            name="document"
+                            accept=".pdf,.doc,.docx,.txt"
+                        >
+
+
+                        <div
+                            id="fileName"
+                            class="file-name">
+                        </div>
+
+
+                        <div class="analysis-options">
+
+                            <h3>
+                                Analysis Options
+                            </h3>
+
+
+                            <label class="option">
+
+                                <input
+                                    type="checkbox"
+                                    id="summaryCheck"
+                                    checked
+                                >
+
+                                <span>
+                                    Generate document summary
+                                </span>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input
+                                    type="checkbox"
+                                    id="keyPointsCheck"
+                                    checked
+                                >
+
+                                <span>
+                                    Identify important points
+                                </span>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input
+                                    type="checkbox"
+                                    id="riskCheck"
+                                    checked
+                                >
+
+                                <span>
+                                    Identify possible risk factors
+                                </span>
+
+                            </label>
+
+
+                            <label class="option">
+
+                                <input
+                                    type="checkbox"
+                                    id="sectionCheck"
+                                    checked
+                                >
+
+                                <span>
+                                    Identify relevant legal sections
+                                </span>
+
+                            </label>
+
+                        </div>
+
+
+                        <button
+                            type="button"
+                            id="analyzeButton"
+                            class="primary-button full-button">
+
+                            ✦ Analyze Document
+
+                        </button>
+
+
+                        <div
+                            id="loadingMessage"
+                            class="loading-message">
+
+                            ⏳ Analyzing your document with the local
+                            AI model. Please wait...
+
+                        </div>
+
+
+                        <div
+                            id="errorMessage"
+                            class="error-message">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ANALYSIS INFORMATION CARD -->
+
+                    <div class="analyzer-card">
+
+                        <h2>
+                            What the Analyzer Checks
+                        </h2>
+
+                        <p class="card-description">
+
+                            The document analyzer uses the extracted
+                            document text and local AI analysis to
+                            organize important information.
+
+                        </p>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Document Summary
+                            </span>
+
+                            <strong>
+                                AI-generated summary
+                            </strong>
+
+                        </div>
+
+                        <br>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Important Points
+                            </span>
+
+                            <strong>
+                                Key facts and events
+                            </strong>
+
+                        </div>
+
+                        <br>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Risk Indicators
+                            </span>
+
+                            <strong>
+                                Potential concerns
+                            </strong>
+
+                        </div>
+
+                        <br>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Legal Sections
+                            </span>
+
+                            <strong>
+                                Potentially relevant provisions
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- ANALYSIS RESULT -->
+                <!-- ================================================= -->
+
+                <div
+                    id="resultCard"
+                    class="result-card">
+
+
+                    <div class="result-header">
+
+                        <h2>
+                            Analysis Result
+                        </h2>
+
+                        <span
+                            class="status-badge status-success"
+                            id="analysisStatus">
+
+                            Analysis Completed
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="result-grid">
+
+                        <div class="result-box">
+
+                            <span>
+                                Document
+                            </span>
+
+                            <strong id="resultFile">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Document Type
+                            </span>
+
+                            <strong id="resultType">
+                                —
+                            </strong>
+
+                        </div>
+
+
+                        <div class="result-box">
+
+                            <span>
+                                Analysis Status
+                            </span>
+
+                            <strong id="resultStatus">
+                                —
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="result-section">
+
+                        <h3>
+                            AI Analysis
+                        </h3>
+
+                        <div
+                            id="rawAnalysis"
+                            class="raw-analysis">
+
+                            Analysis will appear here.
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="result-section">
+
+                        <h3>
+                            Document Summary
+                        </h3>
+
+                        <p id="summaryResult">
+
+                            Analysis summary will appear here.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="result-section">
+
+                        <h3>
+                            Important Points
+                        </h3>
+
+                        <ul
+                            id="findingList"
+                            class="finding-list">
+
+                        </ul>
+
+                    </div>
+
+
+                    <div class="result-section">
+
+                        <h3>
+                            Risk Indicators
+                        </h3>
+
+                        <p id="riskResult">
+
+                            Risk analysis will appear here.
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="result-section">
+
+                        <h3>
+                            Relevant Legal Sections
+                        </h3>
+
+                        <p id="sectionResult">
+
+                            Potentially relevant legal sections will
+                            appear here after detailed analysis.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DISCLAIMER -->
+
+                <div class="legal-disclaimer disclaimer">
+
+                    <strong>
+                        Important Notice
+                    </strong>
+
+                    <p>
+
+                        This document analyzer is intended for
+                        informational and project demonstration
+                        purposes. It does not provide definitive
+                        legal advice or replace review by a qualified
+                        legal professional.
+
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================================= -->
+
+<script>
+
+const documentFile = document.getElementById("documentFile");
+const fileName = document.getElementById("fileName");
+const analyzeButton = document.getElementById("analyzeButton");
+const resultCard = document.getElementById("resultCard");
+
+const loadingMessage =
+    document.getElementById("loadingMessage");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const analysisStatus =
+    document.getElementById("analysisStatus");
+
+const resultStatus =
+    document.getElementById("resultStatus");
+
+
+
+/* =====================================================
+   FILE SELECTION
+   ===================================================== */
+
+documentFile.addEventListener("change", function () {
+
+    if (this.files.length > 0) {
+
+        const file = this.files[0];
+
+        fileName.style.display = "block";
+
+        fileName.textContent =
+            "Selected file: " + file.name;
+
+        errorMessage.style.display = "none";
+
+    } else {
+
+        fileName.style.display = "none";
+
+    }
+
+});
+
+
+
+/* =====================================================
+   SHOW ERROR
+   ===================================================== */
+
+function showError(message) {
+
+    loadingMessage.style.display = "none";
+
+    errorMessage.style.display = "block";
+
+    errorMessage.textContent = message;
+
+    analyzeButton.disabled = false;
+
+}
+
+
+
+/* =====================================================
+   DISPLAY ANALYSIS
+   ===================================================== */
+
+function displayAnalysis(data, file) {
+
+    resultCard.style.display = "block";
+
+    resultCard.scrollIntoView({
+        behavior: "smooth"
+    });
+
+
+    document.getElementById("resultFile").textContent =
+        file.name;
+
+
+    const extension =
+        file.name.split(".").pop().toUpperCase();
+
+    document.getElementById("resultType").textContent =
+        extension;
+
+
+    document.getElementById("resultStatus").textContent =
+        "Completed";
+
+
+    analysisStatus.textContent =
+        "Analysis Completed";
+
+    analysisStatus.className =
+        "status-badge status-success";
+
+
+    const analysis =
+        data.analysis || data.result || "";
+
+
+    document.getElementById("rawAnalysis").textContent =
+        analysis || "No analysis was returned.";
+
+
+    /*
+     * Try to extract the sections generated by Gemma.
+     */
+
+    let summary = "";
+    let importantPoints = [];
+    let risks = "";
+    let legalSections = "";
+
+
+    if (analysis) {
+
+        const summaryMatch =
+            analysis.match(
+                /SUMMARY:\s*([\s\S]*?)(?=IMPORTANT_POINTS:|RISKS:|LEGAL_SECTIONS:|$)/i
+            );
+
+        if (summaryMatch) {
+
+            summary =
+                summaryMatch[1].trim();
+
+        }
+
+
+        const pointsMatch =
+            analysis.match(
+                /IMPORTANT_POINTS:\s*([\s\S]*?)(?=RISKS:|LEGAL_SECTIONS:|$)/i
+            );
+
+        if (pointsMatch) {
+
+            const pointsText =
+                pointsMatch[1].trim();
+
+            importantPoints =
+                pointsText
+                    .split(/\n/)
+                    .map(function (line) {
+                        return line
+                            .replace(/^[-•*]\s*/, "")
+                            .trim();
+                    })
+                    .filter(function (line) {
+                        return line.length > 0;
+                    });
+
+        }
+
+
+        const risksMatch =
+            analysis.match(
+                /RISKS:\s*([\s\S]*?)(?=LEGAL_SECTIONS:|$)/i
+            );
+
+        if (risksMatch) {
+
+            risks =
+                risksMatch[1].trim();
+
+        }
+
+
+        const sectionsMatch =
+            analysis.match(
+                /LEGAL_SECTIONS:\s*([\s\S]*?)$/i
+            );
+
+        if (sectionsMatch) {
+
+            legalSections =
+                sectionsMatch[1].trim();
+
+        }
+
+    }
+
+
+    /*
+     * SUMMARY
+     */
+
+    document.getElementById(
+        "summaryResult"
+    ).textContent =
+        summary ||
+        "The AI did not return a separate summary section.";
+
+
+    /*
+     * IMPORTANT POINTS
+     */
+
+    const findingList =
+        document.getElementById("findingList");
+
+    findingList.innerHTML = "";
+
+
+    if (importantPoints.length > 0) {
+
+        importantPoints.forEach(function(point) {
+
+            const li =
+                document.createElement("li");
+
+            li.textContent = point;
+
+            findingList.appendChild(li);
+
+        });
+
+    } else {
+
+        const li =
+            document.createElement("li");
+
+        li.textContent =
+            "No separate important points were returned.";
+
+        findingList.appendChild(li);
+
+    }
+
+
+    /*
+     * RISKS
+     */
+
+    document.getElementById(
+        "riskResult"
+    ).textContent =
+        risks ||
+        "No separate risk section was returned.";
+
+
+    /*
+     * LEGAL SECTIONS
+     */
+
+    document.getElementById(
+        "sectionResult"
+    ).textContent =
+        legalSections ||
+        "No separate legal-section information was returned.";
+
+}
+
+
+
+/* =====================================================
+   ANALYZE DOCUMENT
+   ===================================================== */
+
+analyzeButton.addEventListener(
+    "click",
+    async function () {
+
+        /*
+         * Check file
+         */
+
+        if (documentFile.files.length === 0) {
+
+            alert(
+                "Please select a legal document first."
+            );
+
+            return;
+
+        }
+
+
+        const file =
+            documentFile.files[0];
+
+
+        /*
+         * Check file size.
+         *
+         * Flask is configured for 50 MB.
+         */
+
+        if (file.size > 50 * 1024 * 1024) {
+
+            showError(
+                "The selected file is larger than 50 MB."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Check extension
+         */
+
+        const allowedExtensions = [
+            "pdf",
+            "docx",
+            "doc",
+            "txt"
+        ];
+
+
+        const extension =
+            file.name
+                .split(".")
+                .pop()
+                .toLowerCase();
+
+
+        if (!allowedExtensions.includes(extension)) {
+
+            showError(
+                "Unsupported file type. Please upload PDF, DOCX, DOC or TXT."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Read selected analysis options.
+         */
+
+        const summaryChecked =
+            document.getElementById(
+                "summaryCheck"
+            ).checked;
+
+
+        const keyPointsChecked =
+            document.getElementById(
+                "keyPointsCheck"
+            ).checked;
+
+
+        const riskChecked =
+            document.getElementById(
+                "riskCheck"
+            ).checked;
+
+
+        const sectionChecked =
+            document.getElementById(
+                "sectionCheck"
+            ).checked;
+
+
+        /*
+         * At least one option must be selected.
+         */
+
+        if (
+            !summaryChecked &&
+            !keyPointsChecked &&
+            !riskChecked &&
+            !sectionChecked
+        ) {
+
+            showError(
+                "Please select at least one analysis option."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Show loading.
+         */
+
+        errorMessage.style.display = "none";
+
+        loadingMessage.style.display = "block";
+
+        analyzeButton.disabled = true;
+
+        analyzeButton.textContent =
+            "⏳ Analyzing...";
+
+
+        /*
+         * Create multipart form data.
+         */
+
+        const formData =
+            new FormData();
+
+
+        formData.append(
+            "document",
+            file
+        );
+
+
+        formData.append(
+            "summary",
+            summaryChecked ? "true" : "false"
+        );
+
+
+        formData.append(
+            "key_points",
+            keyPointsChecked ? "true" : "false"
+        );
+
+
+        formData.append(
+            "risk",
+            riskChecked ? "true" : "false"
+        );
+
+
+        formData.append(
+            "sections",
+            sectionChecked ? "true" : "false"
+        );
+
+
+        /*
+         * Send document to Flask.
+         */
+
+        try {
+
+            const response =
+                await fetch(
+                    "{{ url_for('document_analyzer') }}",
+                    {
+                        method: "POST",
+                        body: formData
+                    }
+                );
+
+
+            /*
+             * Try to read JSON response.
+             */
+
+            let data;
+
+            try {
+
+                data =
+                    await response.json();
+
+            } catch (jsonError) {
+
+                throw new Error(
+                    "The server returned an invalid response. " +
+                    "Please check the Flask terminal for the error."
+                );
+
+            }
+
+
+            /*
+             * Backend error
+             */
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.error ||
+                    data.message ||
+                    "Document analysis failed."
+                );
+
+            }
+
+
+            /*
+             * Display result.
+             */
+
+            displayAnalysis(
+                data,
+                file
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "DOCUMENT ANALYZER ERROR:",
+                error
+            );
+
+
+            showError(
+                error.message ||
+                "Unable to analyze the document."
+            );
+
+
+        } finally {
+
+            loadingMessage.style.display = "none";
+
+            analyzeButton.disabled = false;
+
+            analyzeButton.textContent =
+                "✦ Analyze Document";
+
+        }
+
+    }
+);
+
+</script>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

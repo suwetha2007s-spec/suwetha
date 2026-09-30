@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Powered Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <!-- Dashboard -->
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link active">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <!-- Ask AI -->
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <!-- Legal Documents -->
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Documents</span>
+            </a>
+
+            <!-- Evidence Manager -->
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <!-- Case Tracker -->
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <!-- Ranking -->
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking &amp; Insights</span>
+            </a>
+
+            <!-- Voice Query -->
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <!-- Multi Language -->
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            <!-- AI Case Summary -->
+            <a href="{{ url_for('ai_case_summary') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>AI Case Summary</span>
+            </a>
+
+            <!-- Legal Section Recommendation -->
+            <a href="{{ url_for('legal_section_recommendation') }}" class="sidebar-link">
+                <span>§</span>
+                <span>Legal Section Recommendation</span>
+            </a>
+
+            <!-- Hearing Reminder -->
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <!-- Case Timeline -->
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <!-- AI Document Analyzer -->
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            <!-- Smart Search -->
+            <a href="{{ url_for('smart_search') }}" class="sidebar-link">
+                <span>⌕</span>
+                <span>Smart Search</span>
+            </a>
+
+            <!-- Report Generator -->
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <!-- Notification Center -->
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <!-- Case Outcome Prediction -->
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <!-- Duplicate Detection -->
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <!-- Risk Analyzer -->
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyzer</span>
+            </a>
+
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('profile') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Profile</span>
+            </a>
+
+            <a href="{{ url_for('logout') }}" class="sidebar-link logout-link">
+                <span>⇥</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+        <!-- =================================================
+             TOP NAVBAR
+        ================================================== -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                        autocomplete="off">
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                <!-- Language -->
+                <select
+                    id="languageSelector"
+                    class="language-selector">
+
+                    <option value="en">English</option>
+                    <option value="ta">தமிழ்</option>
+                    <option value="hi">हिन्दी</option>
+
+                </select>
+
+
+                <!-- Notifications -->
+                <button
+                    type="button"
+                    class="notification-button"
+                    id="notificationButton"
+                    data-url="{{url_for('notifications')}}">
+
+                    ♧
+
+                    <span class="notification-count">
+                        3
+                    </span>
+
+                </button>
+
+
+                <!-- User -->
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
+
+        <div class="page-content">
+
+
+            <!-- =================================================
+                 WELCOME SECTION
+            ================================================== -->
+
+            <section class="welcome-section">
+
+                <div>
+
+                    <span class="welcome-small">
+                        AI POWERED COURTROOM ASSISTANT
+                    </span>
+
+                    <h1>
+                        Welcome back,
+                        {{ session.get('username', 'Suwetha') }}!
+                    </h1>
+
+                    <p>
+                        Manage your cases, documents and legal information
+                        from one intelligent dashboard.
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="primary-button"
+                    data-url="{{url_for('ask')}}">
+
+                    ✦ Ask AI Assistant
+
+                </button>
+
+            </section>
+
+
+            <!-- =================================================
+                 STATISTICS
+            ================================================== -->
+
+            <section class="stats-grid">
+
+
+                <!-- Active Cases -->
+                <div class="stat-card">
+
+                    <div class="stat-card-icon">
+                        ▣
+                    </div>
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            Active Cases
+                        </span>
+
+                        <h2>
+                            12
+                        </h2>
+
+                        <small>
+                            +2 this month
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Upcoming Hearings -->
+                <div class="stat-card">
+
+                    <div class="stat-card-icon">
+                        ◷
+                    </div>
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            Upcoming Hearings
+                        </span>
+
+                        <h2>
+                            05
+                        </h2>
+
+                        <small>
+                            Next: 20 Aug
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Legal Documents -->
+                <div class="stat-card">
+
+                    <div class="stat-card-icon">
+                        ▤
+                    </div>
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            Legal Documents
+                        </span>
+
+                        <h2>
+                            48
+                        </h2>
+
+                        <small>
+                            6 uploaded recently
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Notifications -->
+                <div class="stat-card">
+
+                    <div class="stat-card-icon">
+                        ♢
+                    </div>
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            Notifications
+                        </span>
+
+                        <h2>
+                            08
+                        </h2>
+
+                        <small>
+                            3 unread
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DASHBOARD MAIN GRID
+            ================================================== -->
+
+            <section class="dashboard-grid">
+
+
+                <!-- CASE OVERVIEW -->
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Case Overview
+                            </h3>
+
+                            <p>
+                                Current status of your cases
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for('case_tracker') }}">
+                            View All
+                        </a>
+
+                    </div>
+
+
+                    <div class="case-overview-content">
+
+
+                        <div class="case-circle">
+
+                            <div>
+
+                                <strong>
+                                    12
+                                </strong>
+
+                                <span>
+                                    Total Cases
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="case-status-list">
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot filed"></span>
+
+                                <span>
+                                    Filed
+                                </span>
+
+                                <strong>
+                                    5
+                                </strong>
+
+                            </div>
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot hearing"></span>
+
+                                <span>
+                                    Hearing
+                                </span>
+
+                                <strong>
+                                    4
+                                </strong>
+
+                            </div>
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot pending"></span>
+
+                                <span>
+                                    Pending
+                                </span>
+
+                                <strong>
+                                    2
+                                </strong>
+
+                            </div>
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot closed"></span>
+
+                                <span>
+                                    Closed
+                                </span>
+
+                                <strong>
+                                    1
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- UPCOMING HEARING -->
+
+                <div class="dashboard-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Upcoming Hearing
+                            </h3>
+
+                            <p>
+                                Your next scheduled hearing
+                            </p>
+
+                        </div>
+
+                        <a href="{{ url_for('hearing_reminder') }}">
+                            View All
+                        </a>
+
+                    </div>
+
+
+                    <div class="hearing-card-content">
+
+                        <span class="case-badge">
+                            CASE ID: C1024
+                        </span>
+
+                        <h2>
+                            State Vs. Ramesh
+                        </h2>
+
+                        <div class="hearing-detail">
+                            ◷ 20 August 2026 · 10:30 AM
+                        </div>
+
+                        <div class="hearing-detail">
+                            ⌖ District Court, Dindigul
+                        </div>
+
+                        <button
+                            type="button"
+                            class="secondary-button"
+                            data-url="{{url_for('case_details')}}">
+
+                            View Case
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- AI QUICK HELP -->
+
+                <div class="dashboard-card ai-quick-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                AI Quick Help
+                            </h3>
+
+                            <p>
+                                Get instant legal assistance
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="ai-quick-content">
+
+                        <div class="ai-symbol">
+                            ✦
+                        </div>
+
+                        <p>
+                            Ask questions about your case, legal documents,
+                            evidence or relevant legal sections.
+                        </p>
+
+                        <button
+                            type="button"
+                            class="primary-button full-button"
+                            data-url="{{url_for('ask')}}">
+
+                            Ask AI Assistant
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 QUICK MODULES
+            ================================================== -->
+
+            <section class="dashboard-card">
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Quick Access
+                        </h3>
+
+                        <p>
+                            Access important courtroom assistant features
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-modules-grid">
+
+
+                    <a
+                        href="{{ url_for('evidence_manager') }}"
+                        class="quick-module">
+
+                        <span class="quick-module-icon">
+                            ◈
+                        </span>
+
+                        <strong>
+                            Evidence Manager
+                        </strong>
+
+                        <small>
+                            Manage case evidence
+                        </small>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('ai_case_summary') }}"
+                        class="quick-module">
+
+                        <span class="quick-module-icon">
+                            ▣
+                        </span>
+
+                        <strong>
+                            AI Case Summary
+                        </strong>
+
+                        <small>
+                            Generate case summary
+                        </small>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('legal_section_recommendation') }}"
+                        class="quick-module">
+
+                        <span class="quick-module-icon">
+                            §
+                        </span>
+
+                        <strong>
+                            Legal Sections
+                        </strong>
+
+                        <small>
+                            Find relevant sections
+                        </small>
+
+                    </a>
+
+
+                    <a
+                        href="{{ url_for('document_analyzer') }}"
+                        class="quick-module">
+
+                        <span class="quick-module-icon">
+                            ⌁
+                        </span>
+
+                        <strong>
+                            AI Document Analyzer
+                        </strong>
+
+                        <small>
+                            Analyze legal documents
+                        </small>
+
+                    </a>
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script>
+document.getElementById('notificationButton').addEventListener('click', function () {
+    window.location.href = this.dataset.url;
+});
+</script>
+
+
+</body>
+</html>

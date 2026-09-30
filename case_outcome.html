@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Case Outcome Prediction</title>
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: #f4f7fc;
+            color: #172554;
+            min-height: 100vh;
+        }
+
+        .page {
+            max-width: 1250px;
+            margin: auto;
+            padding: 35px;
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 30px;
+            font-weight: 700;
+            color: #172554;
+        }
+
+        .header p {
+            margin-top: 8px;
+            color: #64748b;
+            font-size: 15px;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 8px 25px rgba(30, 41, 59, 0.08);
+            border: 1px solid #e5eaf3;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .card-title i {
+            background: #e8efff;
+            color: #2563eb;
+            padding: 13px;
+            border-radius: 12px;
+            font-size: 18px;
+        }
+
+        .card-title h2 {
+            font-size: 21px;
+            color: #172554;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 9px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 15px;
+            border: 1px solid #dbe2ee;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #334155;
+            background: #fbfdff;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+        }
+
+        .upload-box {
+            border: 2px dashed #b9c8e5;
+            background: #f8faff;
+            border-radius: 13px;
+            padding: 28px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #2563eb;
+            background: #f0f5ff;
+        }
+
+        .upload-box i {
+            font-size: 35px;
+            color: #2563eb;
+            margin-bottom: 12px;
+        }
+
+        .upload-box h3 {
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        .upload-box p {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .upload-box input {
+            margin-top: 15px;
+            border: none;
+            background: transparent;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        .analyze-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .analyze-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .analyze-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 18px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #2563eb;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .result-card {
+            min-height: 400px;
+        }
+
+        .empty-result {
+            text-align: center;
+            padding: 65px 15px;
+            color: #94a3b8;
+        }
+
+        .empty-result i {
+            font-size: 50px;
+            margin-bottom: 18px;
+            color: #cbd5e1;
+        }
+
+        .empty-result h3 {
+            color: #64748b;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .empty-result p {
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .prediction-result {
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .result-header h2 {
+            font-size: 21px;
+            color: #172554;
+        }
+
+        .success-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 7px 11px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .percentage-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .percentage-box {
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .supportive {
+            background: #ecfdf5;
+            border: 1px solid #bbf7d0;
+        }
+
+        .risk {
+            background: #fff1f2;
+            border: 1px solid #fecdd3;
+        }
+
+        .percentage-box h3 {
+            font-size: 13px;
+            margin-bottom: 10px;
+            color: #475569;
+        }
+
+        .percentage-box .percentage {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .supportive .percentage {
+            color: #15803d;
+        }
+
+        .risk .percentage {
+            color: #dc2626;
+        }
+
+        .result-section {
+            margin-top: 22px;
+        }
+
+        .result-section h3 {
+            font-size: 15px;
+            color: #334155;
+            margin-bottom: 9px;
+        }
+
+        .result-section p {
+            font-size: 14px;
+            color: #64748b;
+            line-height: 1.7;
+        }
+
+        .result-section ul {
+            padding-left: 20px;
+        }
+
+        .result-section li {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .strength {
+            display: inline-block;
+            padding: 7px 13px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .disclaimer {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 10px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media (max-width: 850px) {
+
+            .page {
+                padding: 20px;
+            }
+
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="header">
+        <h1>
+            <i class="fas fa-scale-balanced"></i>
+            AI Case Outcome Prediction
+        </h1>
+
+        <p>
+            Upload a legal case document and receive an AI-assisted
+            indicative outcome assessment.
+        </p>
+    </div>
+
+
+    <div class="main-grid">
+
+        <!-- UPLOAD SECTION -->
+
+        <div class="card">
+
+            <div class="card-title">
+                <i class="fas fa-file-pdf"></i>
+
+                <h2>Upload Case Document</h2>
+            </div>
+
+            <p class="description">
+                Upload the case PDF. The AI will analyze the document
+                and prepare an indicative prediction.
+            </p>
+
+
+            <form id="outcomeForm"
+                  enctype="multipart/form-data">
+
+                <div class="form-group">
+
+                    <label for="case_number">
+                        Case Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="case_number"
+                        name="case_number"
+                        placeholder="Example: C1024"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="case_type">
+                        Case Type
+                    </label>
+
+                    <select
+                        id="case_type"
+                        name="case_type"
+                        required>
+
+                        <option value="">Select Case Type</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Criminal">Criminal</option>
+                        <option value="Family">Family</option>
+                        <option value="Property">Property</option>
+                        <option value="Other">Other</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Upload Legal Case PDF
+                    </label>
+
+                    <div class="upload-box">
+
+                        <i class="fas fa-cloud-arrow-up"></i>
+
+                        <h3>
+                            Choose your case document
+                        </h3>
+
+                        <p>
+                            Supported format: PDF only
+                        </p>
+
+                        <input
+                            type="file"
+                            id="case_pdf"
+                            name="case_pdf"
+                            accept=".pdf"
+                            required>
+
+                        <div
+                            class="file-name"
+                            id="fileName">
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="analyze-btn"
+                    id="analyzeBtn">
+
+                    <i class="fas fa-robot"></i>
+                    Analyze Case Outcome
+
+                </button>
+
+
+                <div
+                    class="loading"
+                    id="loadingMessage">
+
+                    <i class="fas fa-spinner fa-spin"></i>
+                    AI is analyzing your PDF. Please wait...
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- RESULT SECTION -->
+
+        <div class="card result-card">
+
+            <div
+                class="empty-result"
+                id="emptyResult">
+
+                <i class="fas fa-chart-pie"></i>
+
+                <h3>
+                    Awaiting AI Analysis
+                </h3>
+
+                <p>
+                    Upload a case PDF and click
+                    "Analyze Case Outcome" to view
+                    the prediction.
+                </p>
+
+            </div>
+
+
+            <div
+                class="prediction-result"
+                id="predictionResult">
+
+                <div class="result-header">
+
+                    <h2>
+                        AI Prediction Result
+                    </h2>
+
+                    <span class="success-badge">
+                        <i class="fas fa-check-circle"></i>
+                        Analyzed
+                    </span>
+
+                </div>
+
+
+                <div class="percentage-grid">
+
+                    <div class="percentage-box supportive">
+
+                        <h3>
+                            Supportive Outcome
+                        </h3>
+
+                        <div
+                            class="percentage"
+                            id="goodPercentage">
+
+                            0%
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="percentage-box risk">
+
+                        <h3>
+                            Risk / Less Supportive
+                        </h3>
+
+                        <div
+                            class="percentage"
+                            id="badPercentage">
+
+                            0%
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        <i class="fas fa-file-lines"></i>
+                        Case Summary
+                    </h3>
+
+                    <p id="summary">
+                        No summary available.
+                    </p>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        <i class="fas fa-shield-halved"></i>
+                        Evidence Strength
+                    </h3>
+
+                    <span
+                        class="strength"
+                        id="evidenceStrength">
+
+                        Not available
+
+                    </span>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        <i class="fas fa-check"></i>
+                        Supporting Points
+                    </h3>
+
+                    <ul id="supportingPoints"></ul>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        <i class="fas fa-triangle-exclamation"></i>
+                        Risk Points
+                    </h3>
+
+                    <ul id="riskPoints"></ul>
+
+                </div>
+
+
+                <div class="result-section">
+
+                    <h3>
+                        <i class="fas fa-lightbulb"></i>
+                        AI Recommendation
+                    </h3>
+
+                    <p id="recommendation">
+                        No recommendation available.
+                    </p>
+
+                </div>
+
+
+                <div class="disclaimer">
+
+                    <strong>
+                        Important Legal Notice:
+                    </strong>
+
+                    This AI prediction is an indicative assessment
+                    based on the uploaded document. It does not
+                    guarantee the actual court outcome and should
+                    not replace professional legal advice.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        © 2026 AI Powered Courtroom Assistant
+    </div>
+
+</div>
+
+
+<script>
+
+    const form = document.getElementById("outcomeForm");
+
+    const pdfInput = document.getElementById("case_pdf");
+
+    const fileName = document.getElementById("fileName");
+
+    const analyzeBtn = document.getElementById("analyzeBtn");
+
+    const loadingMessage = document.getElementById("loadingMessage");
+
+    const emptyResult = document.getElementById("emptyResult");
+
+    const predictionResult = document.getElementById("predictionResult");
+
+
+    pdfInput.addEventListener("change", function () {
+
+        if (this.files.length > 0) {
+
+            fileName.innerText =
+                "Selected: " + this.files[0].name;
+
+        } else {
+
+            fileName.innerText = "";
+
+        }
+
+    });
+
+
+    form.addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        const selectedFile = pdfInput.files[0];
+
+        if (!selectedFile) {
+
+            alert("Please upload a PDF file.");
+
+            return;
+
+        }
+
+
+        if (!selectedFile.name.toLowerCase().endsWith(".pdf")) {
+
+            alert("Please select a PDF file only.");
+
+            return;
+
+        }
+
+
+        const formData = new FormData(form);
+
+        analyzeBtn.disabled = true;
+
+        loadingMessage.style.display = "block";
+
+        emptyResult.style.display = "none";
+
+        predictionResult.style.display = "none";
+
+
+        try {
+
+            const response = await fetch(
+                "{{ url_for('case_outcome') }}",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+            const data = await response.json();
+
+
+            if (!response.ok || !data.success) {
+
+                throw new Error(
+                    data.error || "AI analysis failed."
+                );
+
+            }
+
+
+            const result = data.result || {};
+
+
+            document.getElementById("goodPercentage").innerText =
+                (result.good_percentage ?? 0) + "%";
+
+
+            document.getElementById("badPercentage").innerText =
+                (result.bad_percentage ?? 0) + "%";
+
+
+            document.getElementById("summary").innerText =
+                result.summary || "No summary available.";
+
+
+            document.getElementById("evidenceStrength").innerText =
+                result.evidence_strength || "Not available";
+
+
+            document.getElementById("recommendation").innerText =
+                result.recommendation || "Not available";
+
+
+            const supportingList =
+                document.getElementById("supportingPoints");
+
+            supportingList.innerHTML = "";
+
+
+            (result.supporting_points || []).forEach(function (point) {
+
+                const li = document.createElement("li");
+
+                li.innerText = point;
+
+                supportingList.appendChild(li);
+
+            });
+
+
+            const riskList =
+                document.getElementById("riskPoints");
+
+            riskList.innerHTML = "";
+
+
+            (result.risk_points || []).forEach(function (point) {
+
+                const li = document.createElement("li");
+
+                li.innerText = point;
+
+                riskList.appendChild(li);
+
+            });
+
+
+            loadingMessage.style.display = "none";
+
+            predictionResult.style.display = "block";
+
+        }
+
+        catch (error) {
+
+            loadingMessage.style.display = "none";
+
+            emptyResult.style.display = "block";
+
+            alert(error.message);
+
+        }
+
+        finally {
+
+            analyzeBtn.disabled = false;
+
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

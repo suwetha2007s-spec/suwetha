@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* =====================================================
+           DASHBOARD CLICKABLE CARDS
+           ===================================================== */
+
+
+
+           .sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar-link {
+    padding: 10px 16px;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sidebar-nav {
+    padding-bottom: 20px;
+}
+
+.sidebar-link i {
+    width: 18px;
+    min-width: 18px;
+}
+
+        .stat-card-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            cursor: pointer;
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .stat-card-link:hover {
+            transform: translateY(-3px);
+            text-decoration: none;
+        }
+
+        .stat-card-link:visited {
+            color: inherit;
+        }
+
+        .stat-card-link h2,
+        .stat-card-link span,
+        .stat-card-link small {
+            text-decoration: none;
+        }
+
+        .dashboard-clickable {
+            cursor: pointer;
+            transition: transform 0.2s ease,
+                        box-shadow 0.2s ease;
+        }
+
+        .dashboard-clickable:hover {
+            transform: translateY(-2px);
+        }
+
+        .table-action {
+            text-decoration: none;
+        }
+
+        .primary-button,
+        .secondary-button {
+            text-decoration: none;
+        }
+        
+
+        /* SIDEBAR MODULES AND LOGOUT FIX */
+
+.sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+.sidebar-menu {
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 14px 10px !important;
+}
+
+.sidebar-link {
+    display: flex !important;
+    align-items: center !important;
+    padding: 8px 14px !important;
+    margin-bottom: 2px !important;
+    font-size: 12px !important;
+    white-space: normal !important;
+}
+
+.sidebar-header {
+    padding: 15px !important;
+}
+
+.sidebar-footer {
+    display: block !important;
+    position: relative !important;
+    flex: 0 0 auto !important;
+    margin-top: auto !important;
+    background: #fff !important;
+    padding: 12px 15px !important;
+    border-top: 1px solid #e5e7eb !important;
+    z-index: 10 !important;
+}
+
+.sidebar-footer .logout-link {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    min-height: 43px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: red !important;
+}
+
+       
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sidebar-link">
+
+                <span>▣</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ask') }}"
+               class="sidebar-link">
+
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_documents') }}"
+               class="sidebar-link">
+
+                <span>▤</span>
+                <span>Legal Document</span>
+
+            </a>
+
+
+            <a href="{{ url_for('evidence_manager') }}"
+               class="sidebar-link">
+
+                <span>◈</span>
+                <span>Evidence Manager</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_tracker') }}"
+               class="sidebar-link">
+
+                <span>◫</span>
+                <span>Case Tracker</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ranking') }}"
+               class="sidebar-link">
+
+                <span>★</span>
+                <span>Ranking & Insights</span>
+
+            </a>
+
+
+            <a href="{{ url_for('multi_language') }}"
+               class="sidebar-link">
+
+                <span>文</span>
+                <span>Multi-language Support</span>
+
+            </a>
+
+
+            
+            <a href="{{ url_for('hearing_reminder') }}"
+               class="sidebar-link">
+
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_timeline') }}"
+               class="sidebar-link">
+
+                <span>◌</span>
+                <span>Case Timeline</span>
+
+            </a>
+
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link">
+
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+
+            </a>
+
+
+            
+
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+
+                <span>▥</span>
+                <span>Report Generator</span>
+
+            </a>
+
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+
+                <span>♢</span>
+                <span>Notification Center</span>
+
+            </a>
+
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+
+                <span>♩</span>
+                <span>Voice Query</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+
+            </a>
+
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+
+            </a>
+
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+
+                <span>⚠</span>
+                <span>Case Risk Analyzer</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}" class="sidebar-link logout-link">
+    <span>⇥</span>
+    <span>Logout</span>
+</a>
+
+        </div>
+
+    </aside>
+
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             TOP NAVBAR
+             ================================================= -->
+
+        <header class="top-navbar">
+
+
+            <div class="navbar-left">
+
+
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle">
+
+                    ☰
+
+                </button>
+
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+
+                    <input
+                        type="search"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                        autocomplete="off">
+
+                </div>
+
+            </div>
+
+
+
+            <div class="navbar-right">
+
+           </button>
+<a href="{{ url_for('login') }}"
+   style="background:blue;
+          color:white;
+          padding:10px 22px;
+          border-radius:8px;
+          text-decoration:none;
+          font-weight:600;">
+    Login
+</a>
+
+
+                <div class="user-profile">
+
+
+                    <div class="user-avatar">
+
+                        {% if session.get('username') %}
+
+                            {{ session.get('username')[0]|upper }}
+
+                        {% else %}
+
+                            U
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <div class="user-info">
+
+                        <strong>
+
+                            {% if session.get('username') %}
+
+                                {{ session.get('username') }}
+
+                            {% else %}
+
+                                User
+
+                            {% endif %}
+
+                        </strong>
+
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE CONTENT
+             ================================================= -->
+
+        <div class="page-content">
+
+
+            <!-- =================================================
+                 WELCOME SECTION
+                  ================================================= -->
+
+            <section class="welcome-section">
+
+
+                <div>
+
+                    <span class="welcome-small">
+                        COURTROOM ASSISTANT
+                    </span>
+
+
+                    <h1>
+
+                        Welcome back,
+
+                        {% if session.get('username') %}
+
+                            {{ session.get('username') }}
+
+                        {% else %}
+
+                            User
+
+                        {% endif %}
+
+                    </h1>
+
+
+                    <p>
+                        Manage your cases, documents, evidence and
+                        legal information from one place.
+                    </p>
+
+                </div>
+
+
+
+                <a
+                    href="{{ url_for('ask') }}"
+                    class="primary-button">
+
+                    ✦ Ask AI Assistant
+
+                </a>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 STATISTICS
+                 ================================================= -->
+
+            <section class="stats-grid">
+
+
+                <!-- TOTAL CASES -->
+
+                <a
+                    href="{{ url_for('case_tracker') }}"
+                    class="stat-card stat-card-link">
+                    <div class="stat-card-icon">
+                       ◫ 
+                    </div>
+
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            TOTAL CASES
+                        </span>
+
+
+                        <h2>{{ cases|length }}</h2>
+
+
+                        <small>
+                            saved
+                        </small>
+
+                    </div>
+
+                </a>
+                <!-- VOICE QUERY CARD -->
+<div class="voice-query-card">
+
+    <div class="voice-card-header">
+        <div class="voice-icon">🎙️</div>
+
+        <div>
+            <h2>Voice Query</h2>
+            <p>Ask your legal questions using your voice</p>
+        </div>
+    </div>
+
+    <div class="voice-card-body">
+
+        <button id="voiceBtn" class="voice-button"
+                onclick="startVoiceQuery()">
+            🎤 Start Voice Query
+        </button>
+
+        <p id="voiceStatus" class="voice-status">
+           
+        </p>
+
+        <div id="voiceResult" class="voice-result"></div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+
+/* Voice Query Card - Normal Size */
+
+.voice-query-card {
+    width: 100%;
+    min-height: 220px;
+    box-sizing: border-box;
+    padding: 28px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid #e5e9f2;
+    box-shadow: 0 4px 18px rgba(40, 60, 120, 0.08);
+}
+
+.voice-card-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.voice-card-header h2 {
+    font-size: 22px;
+    margin: 0;
+}
+
+.voice-card-header p {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.voice-card-body {
+    margin-top: 100px;
+}
+
+.voice-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 50px;
+}
+.voice-query-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 24px;
+    margin-top: 10px;
+    box-shadow: 0 4px 20px rgba(40, 60, 120, 0.08);
+    border: 1px solid #e8ecf5;
+}
+
+.voice-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.voice-icon {
+    width: 52px;
+    height: 60px;
+    border-radius: 14px;
+    background: #e9efff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.voice-card-header h2 {
+    margin: 0;
+    color: #202b50;
+    font-size: 21px;
+}
+
+.voice-card-header p {
+    margin: 5px 0 0;
+    color: #7b849c;
+    font-size: 14px;
+}
+
+.voice-card-body {
+    margin-top: 24px;
+}
+
+.voice-button {
+    background: #315eea;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 22px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.voice-button:hover {
+    background: #244ac4;
+}
+
+.voice-status {
+    color: #737d96;
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.voice-result {
+    background: #f5f7fc;
+    padding: 14px;
+    border-radius: 10px;
+    margin-top: 12px;
+    color: #263353;
+    display: none;
+}
+/* AI Courtroom Brand Blue Color */
+.sidebar-brand h2,
+.brand-title,
+.logo-text h2 {
+    color: #2563eb !important;
+}
+
+/* Legal Assistant Subtitle */
+.sidebar-brand p,
+.brand-subtitle,
+.logo-text p {
+    color: #2563eb !important;
+}
+
+/* Brand Name Blue */
+.sidebar h2,
+.sidebar h3,
+.sidebar p:first-of-type,
+.logo h2,
+.logo p,
+.brand h2,
+.brand p {
+    color: white!important;
+}
+
+/* AI Courtroom Text */
+.sidebar .brand-name,
+.sidebar .brand-title,
+.sidebar .brand-subtitle {
+    color: white !important;
+}
+
+/* AI Courtroom Blue Brand Box */
+.sidebar-brand,
+.sidebar .brand,
+.logo,
+.sidebar-header {
+    background:blue !important;
+    border-radius: 8px;
+    padding: 18px !important;
+}
+
+/* White Brand Text */
+.sidebar-brand *,
+.sidebar .brand *,
+.logo *,
+.sidebar-header * {
+    color: #ffffff !important;
+}
+
+
+</style>
+
+
+<script>
+function startVoiceQuery() {
+
+    const status = document.getElementById("voiceStatus");
+    const result = document.getElementById("voiceResult");
+    const button = document.getElementById("voiceBtn");
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+        status.innerText =
+            "Voice recognition is not supported in this browser.";
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "en-IN";
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    status.innerText = "Listening... Please speak";
+    button.innerText = "🎙️ Listening...";
+
+    recognition.start();
+
+    recognition.onresult = function(event) {
+
+        const voiceText =
+            event.results[0][0].transcript;
+
+        result.style.display = "block";
+        result.innerText = "Your Question: " + voiceText;
+
+        status.innerText =
+            "Voice captured successfully.";
+
+        button.innerText = "🎤 Start Voice Query";
+
+        // Open Voice Query module
+        window.location.href =
+            "{{ url_for('voice_query') }}?query=" +
+            encodeURIComponent(voiceText);
+    };
+
+    recognition.onerror = function() {
+
+        status.innerText =
+            "Unable to recognize voice. Please try again.";
+
+        button.innerText = "🎤 Start Voice Query";
+    };
+
+    recognition.onend = function() {
+
+        button.innerText = "🎤 Start Voice Query";
+    };
+}
+</script>
+    <!-- EVIDENCE ITEMS -->
+
+                <a
+                    href="{{ url_for('evidence_manager') }}"
+                    class="stat-card stat-card-link">
+
+                    <div class="stat-card-icon">
+                        ◈
+                    </div>
+
+
+                    <div class="stat-card-content">
+
+                        <span>
+                            Evidence Items
+                        </span>
+
+
+                       <h2>{{ evidence|length }}</h2>
+
+
+                        <small>
+                             Verified
+                             Not Verified
+                        </small>
+
+                    </div>
+
+                </a>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 MAIN DASHBOARD GRID
+                 ================================================= -->
+
+            <section class="dashboard-grid">
+
+
+                <!-- =================================================
+                     CASE OVERVIEW
+                     ================================================= -->
+
+                <div class="dashboard-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Case Overview
+                            </h3>
+
+                            <p>
+                                Current case status
+                            </p>
+
+                        </div>
+
+
+                        <a href="{{ url_for('case_tracker') }}">
+                            View All
+                        </a>
+
+                    </div>
+
+
+
+                    <div class="case-overview-content">
+
+
+                        <div class="case-circle">
+
+                            <div>
+
+                                
+                                    <strong>
+                                        {{ cases|length }}
+                                   </strong>
+
+                                <span>
+                                    Cases
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="case-status-list">
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot filed"></span>
+
+                                <span>
+                                    Filed
+                                </span>
+
+                                
+                                    <strong>
+                                        {{ case_counts["filed"] or 0 }}
+                                    </strong>
+
+                            </div>
+
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot hearing"></span>
+
+                                <span>
+                                    Hearing
+                                </span>
+
+                               <strong>
+                                    {{ case_counts["hearing"] or 0 }}
+                                </strong>
+                            </div>
+
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot pending"></span>
+
+                                <span>
+                                    Pending
+                                </span>
+
+                                <strong>
+                                    {{ case_counts["pending"] or 0 }}
+                                </strong>
+
+                            </div>
+
+
+
+                            <div class="case-status">
+
+                                <span class="status-dot closed"></span>
+
+                                <span>
+                                    Closed
+                                </span>
+                                 <strong>
+                                      {{ case_counts["closed"] or 0 }}
+                                    </strong>
+                                
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     UPCOMING HEARING
+                     ================================================= -->
+
+                <div class="dashboard-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                Upcoming Hearing
+                            </h3>
+
+                            <p>
+                                Next scheduled hearing
+                            </p>
+
+                        </div>
+<a href="{{ url_for('hearing_reminder') }}"
+   class="btn btn-primary">
+    Details
+</a>   </div>
+
+
+
+                    <div class="hearing-card-content">
+
+    {% if hearings %}
+
+        {% set hearing = hearings[0] %}
+
+        <span class="case-badge">
+            CASE #{{ hearing["case_id"] }}
+        </span>
+
+        <h2>
+            {{ hearing["case_name"] or "Case Hearing" }}
+        </h2>
+
+        <p class="hearing-detail">
+            📅 {{ hearing["hearing_date"] or "Date not scheduled" }}
+        </p>
+
+        <p class="hearing-detail">
+            ◷ {{ hearing["hearing_time"] or "Time not scheduled" }}
+        </p>
+
+        <p class="hearing-detail">
+            ⚖ {{ hearing["court"] or "Court not specified" }}
+        </p>
+        
+
+    {% else %}
+
+        <h2>No Upcoming Hearings</h2>
+
+        <p class="hearing-detail">
+            No hearings scheduled yet.
+        </p>
+
+    {% endif %}
+
+</div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     AI QUICK HELP
+                     ================================================= -->
+
+                <div class="dashboard-card ai-quick-card">
+
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h3>
+                                AI Quick Help
+                            </h3>
+
+                            <p>
+                                Get assistance with your case
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="ai-quick-content">
+
+
+                        <div class="ai-symbol">
+                            ✦
+                        </div>
+
+
+                        <p>
+                            Ask questions about legal sections,
+                            documents, evidence or case information.
+                        </p>
+
+
+                        <a
+                            href="{{ url_for('ask') }}"
+                            class="secondary-button">
+
+                            Ask AI Assistant →
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 RECENT CASES
+                 ================================================= -->
+
+            <section class="dashboard-card recent-cases">
+
+
+                <div class="card-header">
+
+
+                    <div>
+
+                        <h3>
+                            Recent Cases
+                        </h3>
+
+                        <p>
+                            Latest case activity
+                        </p>
+
+                    </div>
+
+
+                    <a href="{{ url_for('case_tracker') }}">
+                        View All Cases
+                    </a>
+
+                </div>
+
+
+
+                <div class="case-table-wrapper">
+
+
+                    <table class="case-table">
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Case ID
+                                </th>
+
+                                <th>
+                                    Case Name
+                                </th>
+
+                                <th>
+                                    Type
+                                </th>
+
+                                <th>
+                                    Next Hearing
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+
+                        <tbody>
+
+    {% for case in cases %}
+
+    <tr>
+        <td>
+            <strong>{{ case["case_id"] }}</strong>
+        </td>
+
+        <td>{{ case["case_name"] }}</td>
+
+        <td>{{ case["case_type"] or "General" }}</td>
+
+        <td>
+            {{ case["next_hearing"] or "Not Scheduled" }}
+        </td>
+
+        <td>
+            <span class="table-status {{ case['status']|lower }}">
+                {{ case["status"] }}
+            </span>
+        </td>
+
+        <td>
+            <a href="{{ url_for('case_tracker') }}"
+               class="table-action">
+                View
+            </a>
+        </td>
+    </tr>
+
+    {% else %}
+
+    <tr>
+        <td colspan="6" style="text-align:center;">
+            No cases found
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+                    </table>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================================
+                 QUICK ACCESS
+                 ================================================= -->
+
+            <section class="dashboard-card">
+
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Quick Access
+                        </h3>
+
+                        <p>
+                            Frequently used courtroom tools
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="quick-access-grid">
+
+
+                    
+
+
+
+                    <a
+                        href="{{ url_for('risk_analyser') }}"
+                        class="quick-access-item">
+
+                        <span>
+                            △
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Risk Analysis
+                            </strong>
+
+                            <small>
+                                Analyse case risk
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+
+                    <a
+                        href="{{ url_for('report_generator') }}"
+                        class="quick-access-item">
+
+                        <span>
+                            ▧
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Report Generator
+                            </strong>
+
+                            <small>
+                                Generate case report
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+
+                    <a
+                        href="{{ url_for('ranking') }}"
+                        class="quick-access-item">
+
+                        <span>
+                            ◆
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Ranking & Insights
+                            </strong>
+
+                            <small>
+                                View evidence insights
+                            </small>
+
+                        </div>
+
+                    </a>
+
+
+                </div>
+
+            </section>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<!-- =========================================================
+     DASHBOARD JAVASCRIPT
+     ========================================================= -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =====================================================
+       MOBILE MENU
+       ===================================================== */
+
+    const menuToggle =
+        document.getElementById("menuToggle");
+
+    const sidebar =
+        document.querySelector(".sidebar");
+
+
+    if (menuToggle && sidebar) {
+
+        menuToggle.addEventListener("click", function () {
+
+            sidebar.classList.toggle("sidebar-open");
+
+        });
+
+    }
+
+
+
+    /* =====================================================
+       GLOBAL SEARCH
+       ===================================================== */
+
+    const globalSearch =
+        document.getElementById("globalSearch");
+
+
+    if (globalSearch) {
+
+        globalSearch.addEventListener("keypress", function (event) {
+
+            if (event.key === "Enter") {
+
+                const query =
+                    globalSearch.value.trim();
+
+
+                // Smart Search removed
+
+            }
+
+        });
+
+    }
+
+
+
+    /* =====================================================
+       LANGUAGE SELECTOR
+       ===================================================== */
+
+    const languageSelector =
+        document.getElementById("languageSelector");
+
+
+    if (languageSelector) {
+
+        languageSelector.addEventListener("change", function () {
+
+            const selectedLanguage =
+                this.value;
+
+
+            localStorage.setItem(
+                "preferredLanguage",
+                selectedLanguage
+            );
+
+        });
+
+
+        const savedLanguage =
+            localStorage.getItem(
+                "preferredLanguage"
+            );
+
+
+        if (savedLanguage) {
+
+            languageSelector.value =
+                savedLanguage;
+
+        }
+
+    }
+
+});
+
+
+
+</script>
+
+
+
+</body>
+
+</html>

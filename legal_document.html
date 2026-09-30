@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Legal Document | AI Courtroom</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        /* =========================
+           PROFESSIONAL LEGAL DOCUMENT
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .sidebar {
+            width: 245px;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: linear-gradient(180deg, #101b3d, #162858);
+            color: white;
+            padding: 25px 15px;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.08);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 12px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .logo i {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: #315efb;
+            font-size: 20px;
+        }
+
+        .logo h2 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            margin: 25px 0 0;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin-bottom: 7px;
+        }
+
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 15px;
+            color: #d9e1f5;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.25s;
+        }
+
+        .sidebar a:hover {
+            background: rgba(255,255,255,0.09);
+            color: white;
+        }
+
+        .sidebar a.active {
+            background: #315efb;
+            color: white;
+            box-shadow: 0 7px 18px rgba(49,94,251,0.28);
+        }
+
+        .sidebar a i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* =========================
+           MAIN CONTENT
+        ========================= */
+
+        .main-content {
+            margin-left: 245px;
+            min-height: 100vh;
+            padding: 30px 40px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 29px;
+            color: #14213d;
+        }
+
+        .page-title p {
+            margin: 7px 0 0;
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .header-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #315efb;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            font-size: 20px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 26px;
+            margin-bottom: 24px;
+            box-shadow: 0 7px 25px rgba(26,43,80,0.07);
+            border: 1px solid #e8edf5;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title .icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #edf2ff;
+            color: #315efb;
+        }
+
+        .card-title h2 {
+            margin: 0;
+            font-size: 19px;
+            color: #18243c;
+        }
+
+        .card-title p {
+            margin: 4px 0 0;
+            color: #8993a6;
+            font-size: 13px;
+        }
+
+        /* =========================
+           UPLOAD FORM
+        ========================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select,
+        .search-input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #dce3ee;
+            border-radius: 10px;
+            outline: none;
+            background: #fbfcfe;
+            color: #263248;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .search-input:focus {
+            border-color: #315efb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(49,94,251,0.08);
+        }
+
+        .upload-area {
+            margin-top: 22px;
+            border: 2px dashed #cbd5e7;
+            border-radius: 15px;
+            min-height: 165px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            cursor: pointer;
+            background: #fafcff;
+            transition: 0.25s;
+        }
+
+        .upload-area:hover {
+            border-color: #315efb;
+            background: #f5f8ff;
+        }
+
+        .upload-area input {
+            display: none;
+        }
+
+        .upload-content i {
+            font-size: 35px;
+            color: #315efb;
+            margin-bottom: 10px;
+        }
+
+        .upload-content h3 {
+            margin: 0 0 5px;
+            font-size: 16px;
+            color: #24324a;
+        }
+
+        .upload-content p {
+            margin: 0;
+            color: #8a94a6;
+            font-size: 13px;
+        }
+
+        .upload-content span {
+            display: inline-block;
+            margin-top: 9px;
+            padding: 5px 10px;
+            background: #edf2ff;
+            color: #315efb;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+
+        .primary-btn {
+            margin-top: 20px;
+            border: none;
+            background: #315efb;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 9px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.25s;
+        }
+
+        .primary-btn:hover {
+            background: #244bd5;
+            transform: translateY(-1px);
+        }
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 14px;
+            color: #8993a6;
+        }
+
+        .search-input {
+            padding-left: 42px;
+        }
+
+        /* =========================
+           DOCUMENT TABLE
+        ========================= */
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #68758b;
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #edf1f6;
+            font-size: 13px;
+            color: #39465c;
+        }
+
+        tr:hover td {
+            background: #fafcff;
+        }
+
+        .document-name {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-weight: 600;
+            color: #24324a;
+        }
+
+        .document-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 9px;
+            background: #fff1f1;
+            color: #e5484d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-badge {
+            padding: 5px 9px;
+            background: #f0f4ff;
+            color: #315efb;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .verified {
+            background: #eaf9f0;
+            color: #17834d;
+        }
+
+        .pending {
+            background: #fff6df;
+            color: #a66b00;
+        }
+
+        .download-btn {
+            border: 1px solid #dce3ee;
+            background: white;
+            color: #315efb;
+            padding: 8px 12px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .download-btn:hover {
+            background: #edf2ff;
+        }
+
+        /* =========================
+           AI ANALYZER
+        ========================= */
+
+        .ai-card {
+            background: linear-gradient(135deg, #111d42, #1e397d);
+            color: white;
+            border: none;
+        }
+
+        .ai-card .card-title .icon {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+
+        .ai-card .card-title h2 {
+            color: white;
+        }
+
+        .ai-card .card-title p,
+        .ai-description {
+            color: #c8d2e8;
+        }
+
+        .ai-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .ai-feature {
+            padding: 14px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .ai-feature i {
+            margin-right: 7px;
+        }
+
+        .ai-btn {
+            border: none;
+            background: white;
+            color:white;
+            padding: 11px 18px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+            color: #8a94a6;
+            font-size: 12px;
+            padding: 20px 0 5px;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                padding: 25px;
+            }
+
+            .ai-features {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .sidebar ul {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .sidebar li {
+                min-width: max-content;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .top-header {
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<div class="sidebar">
+
+    <div class="logo">
+        <i class="fas fa-scale-balanced"></i>
+        <h2>AI Courtroom</h2>
+    </div>
+
+    <ul>
+
+       
+
+        
+        
+
+    </ul>
+
+</div>
+
+
+<!-- =========================
+     MAIN CONTENT
+========================= -->
+
+<div class="main-content">
+
+    <!-- HEADER -->
+
+    <div class="top-header">
+
+        <div class="page-title">
+
+            <h1>
+                <i class="fas fa-folder-open"></i>
+                Legal Document
+            </h1>
+
+            <p>
+                Securely upload, manage and analyze your legal document
+            </p>
+
+        </div>
+
+        <div class="header-icon">
+            <i class="fas fa-shield-halved"></i>
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         UPLOAD DOCUMENT
+    ========================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="icon">
+                    <i class="fas fa-cloud-arrow-up"></i>
+                </div>
+
+                <div>
+                    <h2>Upload Legal Document</h2>
+                    <p>Add a new document to your case records</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <form action="{{ url_for('upload_document') }}"
+              method="POST"
+              enctype="multipart/form-data">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Document Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        placeholder="e.g. Property Case Order"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Document Category
+                    </label>
+
+                    <select name="category">
+
+                        <option>Court Order</option>
+                        <option>FIR</option>
+                        <option>Evidence</option>
+                        <option>Affidavit</option>
+                        <option>Agreement</option>
+                        <option>Other</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <label class="upload-area">
+
+                <input
+                    type="file"
+                    name="file"
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    required>
+
+                <div class="upload-content">
+
+                    <i class="fas fa-cloud-arrow-up"></i>
+
+                    <h3>Click to upload your document</h3>
+
+                    <p>
+                        Select PDF, DOC, DOCX or image files
+                    </p>
+
+                    <span>
+                        SECURE DOCUMENT UPLOAD
+                    </span>
+
+                </div>
+
+            </label>
+
+
+            <button type="submit" class="primary-btn">
+
+                <i class="fas fa-upload"></i>
+                Upload Document
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <!-- =========================
+         SEARCH DOCUMENTS
+    ========================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="icon">
+                    <i class="fas fa-magnifying-glass"></i>
+                </div>
+
+                <div>
+                    <h2>Search Documents</h2>
+                    <p>Quickly find documents by name or category</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="search-wrapper">
+
+            <i class="fas fa-search"></i>
+
+            <input
+                type="text"
+                id="documentSearch"
+                class="search-input"
+                placeholder="Search by document name or category...">
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         DOCUMENT TABLE
+    ========================= -->
+
+    <div class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="icon">
+                    <i class="fas fa-folder-tree"></i>
+                </div>
+
+                <div>
+                    <h2>Uploaded Documents</h2>
+                    <p>Manage your stored legal document</p>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-wrapper">
+
+            <table id="documentsTable">
+
+                <thead>
+
+                    <tr>
+                        <th>Document</th>
+                        <th>Category</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+              
+
+
+                <tbody>
+
+    {% if documents %}
+
+        {% for document in documents %}
+
+        <tr>
+
+            <td>
+
+                <div class="document-name">
+
+                    <div class="document-icon">
+
+                        {% if document.file_type == "pdf" %}
+
+                            <i class="fas fa-file-pdf"></i>
+
+                        {% elif document.file_type in ["jpg", "jpeg", "png"] %}
+
+                            <i class="fas fa-image"></i>
+
+                        {% else %}
+
+                            <i class="fas fa-file"></i>
+
+                        {% endif %}
+
+                    </div>
+
+                    {{ document.original_name }}
+
+                </div>
+
+            </td>
+
+
+            <td>
+
+                <span class="category-badge">
+
+                    {{ document.file_type|upper }}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                {{ document.uploaded_at }}
+
+            </td>
+
+
+            <td>
+
+                <span class="status verified">
+
+                    <i class="fas fa-check"></i>
+
+                    Uploaded
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <a
+                    href="{{ url_for('view_document', document_id=document.id) }}"
+                    class="download-btn"
+                    target="_blank"
+                >
+
+                    <i class="fas fa-eye"></i>
+
+                    View
+
+                </a>
+
+                <form action="{{ url_for('delete_document', document_id=document.id) }}"
+      method="POST"
+      style="display:inline;"
+      onsubmit="return confirm('Are you sure you want to delete this document?');">
+
+    <button type="submit"
+            class="download-btn"
+            style="color:#e5484d; margin-left:8px;">
+        <i class="fas fa-trash"></i>
+        Delete
+    </button>
+
+</form>
+
+            </td>
+
+
+        </tr>
+
+        {% endfor %}
+
+
+    {% else %}
+
+        <tr>
+
+            <td
+                colspan="5"
+                style="text-align:center; padding:30px;"
+            >
+
+                No documents uploaded yet.
+
+            </td>
+
+        </tr>
+
+    {% endif %}
+
+</tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    
+
+    <!-- =========================
+         AI DOCUMENT ANALYZER
+    ========================= -->
+
+    <div class="card ai-card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+
+                <div>
+
+                    <h2>AI Document Analyzer</h2>
+
+                    <p>
+                        Intelligent legal document analysis
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+        
+        <p class="ai-description">
+
+            AI can analyze uploaded legal document, extract
+            important information, summarize content and identify
+            potentially relevant legal sections.
+
+        </p>
+
+
+        <div class="ai-features">
+
+            <div class="ai-feature">
+                <i class="fas fa-file-lines"></i>
+                Document Summary
+            </div>
+
+            <div class="ai-feature">
+                <i class="fas fa-scale-balanced"></i>
+                Legal Sections
+            </div>
+
+            <div class="ai-feature">
+                <i class="fas fa-list-check"></i>
+                Key Information
+            </div>
+
+        </div>
+
+
+        <button class="ai-btn">
+
+            <i class="fas fa-wand-magic-sparkles"></i>
+            Analyze Documents
+
+        </button>
+
+    </div>
+
+
+    <!-- FOOTER -->
+
+    <footer class="footer">
+
+        <p>
+            © 2026 AI Powered Courtroom Assistant
+            · Secure Legal Assistance Platform
+        </p>
+
+    </footer>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+<!-- =========================
+     DOCUMENT SEARCH
+========================= -->
+
+<script>
+
+    const searchInput =
+        document.getElementById("documentSearch");
+
+    const table =
+        document.getElementById("documentsTable");
+
+    if (searchInput && table) {
+
+        searchInput.addEventListener("keyup", function () {
+
+            const searchValue =
+                this.value.toLowerCase();
+
+            const rows =
+                table.querySelectorAll("tbody tr");
+
+            rows.forEach(function (row) {
+
+                const text =
+                    row.innerText.toLowerCase();
+
+                row.style.display =
+                    text.includes(searchValue)
+                    ? ""
+                    : "none";
+
+            });
+
+        });
+
+    }
+
+
+    /* Show selected filename */
+
+    const fileInput =
+        document.querySelector(
+            'input[name="file"]'
+        );
+
+    if (fileInput) {
+
+        fileInput.addEventListener("change", function () {
+
+            const uploadText =
+                document.querySelector(".upload-content h3");
+
+            if (this.files.length > 0) {
+
+                uploadText.innerText =
+                    this.files[0].name;
+
+            }
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>

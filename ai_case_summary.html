@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Case Summary | AI Courtroom Assistant</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        /* ================= LAYOUT ================= */
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            background: #0f172a;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            padding: 24px 15px;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 5px 10px 28px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 18px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .logo h2 {
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .logo p {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 13px;
+            border-radius: 9px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #1e293b;
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: 25px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 15px;
+        }
+
+        .logout-link {
+            color: #fca5a5;
+        }
+
+        /* ================= MAIN ================= */
+
+        .main-content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+        }
+
+        /* ================= TOP NAV ================= */
+
+        .top-navbar {
+            height: 72px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .navbar-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .language-selector {
+            border: 1px solid #dbe2ea;
+            padding: 8px 12px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-info strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .user-info span {
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        /* ================= PAGE ================= */
+
+        .page-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .breadcrumb {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 18px;
+        }
+
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        /* ================= PAGE HEADER ================= */
+
+        .page-header {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            padding: 30px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header-left {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .page-icon {
+            width: 58px;
+            height: 58px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 7px;
+        }
+
+        .page-header p {
+            color: #dbeafe;
+            font-size: 14px;
+        }
+
+        .ai-status {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        /* ================= GRID ================= */
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.4fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* ================= CARD ================= */
+
+        .card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(15,23,42,0.04);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .card-header-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            color: #0f172a;
+        }
+
+        .card-header p {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 3px;
+        }
+
+        /* ================= FORM ================= */
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        /* ================= FILE UPLOAD ================= */
+
+        .upload-box {
+            border: 2px dashed #cbd5e1;
+            border-radius: 13px;
+            padding: 25px;
+            text-align: center;
+            background: #f8fafc;
+            transition: 0.2s;
+        }
+
+        .upload-box:hover {
+            border-color: #2563eb;
+            background: #eff6ff;
+        }
+
+        .upload-icon {
+            font-size: 34px;
+            margin-bottom: 10px;
+        }
+
+        .upload-box h3 {
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .upload-box p {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        .file-input {
+            width: 100%;
+            font-size: 13px;
+        }
+
+        /* ================= BUTTON ================= */
+
+        .primary-button {
+            width: 100%;
+            border: none;
+            padding: 13px;
+            border-radius: 9px;
+            background: #2563eb;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .primary-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* ================= AI SUMMARY ================= */
+
+        .summary-placeholder {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.7;
+            min-height: 150px;
+        }
+
+        .summary-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        /* ================= SECTIONS ================= */
+
+        .section-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 5px 20px rgba(15,23,42,0.04);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 19px;
+            margin-bottom: 18px;
+            color: #0f172a;
+        }
+
+        /* ================= LEGAL TABLE ================= */
+
+        .legal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .legal-table th {
+            background: #f8fafc;
+            text-align: left;
+            padding: 13px;
+            font-size: 12px;
+            color: #475569;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .legal-table td {
+            padding: 14px 13px;
+            border-bottom: 1px solid #eef2f7;
+            font-size: 13px;
+        }
+
+        .section-badge {
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        /* ================= EVIDENCE ================= */
+
+        .evidence-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .evidence-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .evidence-icon {
+            width: 36px;
+            height: 36px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .evidence-item strong {
+            display: block;
+            font-size: 13px;
+        }
+
+        .evidence-item span {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        /* ================= HEARING ================= */
+
+        .hearing-box {
+            background: linear-gradient(135deg, #eff6ff, #f8fafc);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .hearing-detail span {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+
+        .hearing-detail strong {
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        /* ================= FOOTER ================= */
+
+        .app-footer {
+            padding: 25px 30px;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 1000px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .main-content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .page-content {
+                padding: 15px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .evidence-list {
+                grid-template-columns: 1fr;
+            }
+
+            .hearing-box {
+                grid-template-columns: 1fr;
+            }
+
+            .app-footer {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sidebar-link">
+
+                <span>▣</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ask') }}"
+               class="sidebar-link">
+
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_documents') }}"
+               class="sidebar-link">
+
+                <span>▤</span>
+                <span>Legal Document</span>
+
+            </a>
+
+
+            <a href="{{ url_for('evidence_manager') }}"
+               class="sidebar-link">
+
+                <span>◈</span>
+                <span>Evidence Manager</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_tracker') }}"
+               class="sidebar-link">
+
+                <span>◫</span>
+                <span>Case Tracker</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ranking') }}"
+               class="sidebar-link">
+
+                <span>★</span>
+                <span>Ranking & Insights</span>
+
+            </a>
+
+
+            <a href="{{ url_for('multi_language') }}"
+               class="sidebar-link">
+
+                <span>文</span>
+                <span>Multi-language Support</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ai_case_summary') }}"
+               class="sidebar-link active">
+
+                <span>▣</span>
+                <span>AI Case Summary</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_section') }}"
+               class="sidebar-link">
+
+                <span>§</span>
+                <span>Legal Section Recommendation</span>
+
+            </a>
+
+
+            <a href="{{ url_for('hearing_reminder') }}"
+               class="sidebar-link">
+
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_timeline') }}"
+               class="sidebar-link">
+
+                <span>◌</span>
+                <span>Case Timeline</span>
+
+            </a>
+
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link">
+
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+
+            </a>
+
+
+            <a href="{{ url_for('smart_search') }}"
+               class="sidebar-link">
+
+                <span>⌕</span>
+                <span>Smart Search</span>
+
+            </a>
+
+
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+
+                <span>▥</span>
+                <span>Report Generator</span>
+
+            </a>
+
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+
+                <span>♢</span>
+                <span>Notification Center</span>
+
+            </a>
+
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+
+                <span>♩</span>
+                <span>Voice Query</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+
+            </a>
+
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+
+            </a>
+
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+
+                <span>⚠</span>
+                <span>Case Risk Analyzer</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-title">
+                AI Case Summary
+            </div>
+
+
+            <div class="navbar-right">
+
+                <select class="language-selector">
+
+                    <option>English</option>
+                    <option>தமிழ்</option>
+                    <option>हिन्दी</option>
+
+                </select>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+
+                        {{ session.get('username', 'S')[0]|upper }}
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+
+        <div class="page-content">
+
+
+            <div class="breadcrumb">
+
+                <a href="{{ url_for('dashboard') }}">
+                    Dashboard
+                </a>
+
+                &nbsp; / &nbsp;
+
+                AI Case Summary
+
+            </div>
+
+
+            <!-- PAGE HEADER -->
+
+            <section class="page-header">
+
+                <div class="page-header-left">
+
+                    <div class="page-icon">
+                        🤖
+                    </div>
+
+                    <div>
+
+                        <h1>
+                            AI Case Summary
+                        </h1>
+
+                        <p>
+                            Upload case documents and generate an intelligent
+                            summary of important legal information.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="ai-status">
+
+                    <span class="status-dot"></span>
+
+                    AI Assistant Ready
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 UPLOAD + SUMMARY
+            ================================================== -->
+
+            <section class="summary-grid">
+
+
+                <!-- UPLOAD CARD -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div class="card-header-icon">
+                            ↑
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Upload Case Documents
+                            </h2>
+
+                            <p>
+                                Provide documents for AI analysis
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- IMPORTANT:
+                         Keep your existing Flask POST route here
+                    -->
+
+                    <form method="POST"
+                          enctype="multipart/form-data">
+
+
+                        <div class="form-group">
+
+                            <label for="case_title">
+                                Case Title
+                            </label>
+
+                            <input
+                                type="text"
+                                id="case_title"
+                                name="case_title"
+                                class="form-input"
+                                placeholder="Enter case title"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label>
+                                Case Document
+                            </label>
+
+
+                            <div class="upload-box">
+
+                                <div class="upload-icon">
+                                    ☁
+                                </div>
+
+                                <h3>
+                                    Upload Legal Document
+                                </h3>
+
+                                <p>
+                                    Supported formats: PDF, DOCX and TXT
+                                </p>
+
+
+                                <input
+                                    type="file"
+                                    name="document"
+                                    class="file-input"
+                                    accept=".pdf,.doc,.docx,.txt"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="primary-button">
+
+                            🤖 Generate AI Summary
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- AI SUMMARY CARD -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div class="card-header-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Generated Case Summary
+                            </h2>
+
+                            <p>
+                                AI-generated analysis of the uploaded case
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <span class="summary-badge">
+                        AI ANALYSIS
+                    </span>
+
+
+                    {% if summary %}
+
+                    <div class="summary-placeholder">
+
+                        {{ summary }}
+
+                    </div>
+
+                    {% else %}
+
+                    <div class="summary-placeholder">
+
+                        <strong>
+                            No summary generated yet.
+                        </strong>
+
+                        <br><br>
+
+                        Upload a case document and click
+                        <strong>Generate AI Summary</strong>
+                        to analyze the case.
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 LEGAL SECTIONS
+            ================================================== -->
+
+            <section class="section-card">
+
+                <div class="section-title">
+
+                    <span>§</span>
+
+                    Recommended Legal Sections
+
+                </div>
+
+
+                <table class="legal-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Legal Section
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Relevance
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        <tr>
+
+                            <td>
+                                <span class="section-badge">
+                                    BNS Section 303
+                                </span>
+                            </td>
+
+                            <td>
+                                Theft Related Offence
+                            </td>
+
+                            <td>
+                                High
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                <span class="section-badge">
+                                    BNS Section 316
+                                </span>
+                            </td>
+
+                            <td>
+                                Criminal Breach of Trust
+                            </td>
+
+                            <td>
+                                Medium
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                <span class="section-badge">
+                                    Evidence Law
+                                </span>
+                            </td>
+
+                            <td>
+                                Electronic Evidence Rules
+                            </td>
+
+                            <td>
+                                High
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+
+            <!-- =================================================
+                 KEY EVIDENCE
+            ================================================== -->
+
+            <section class="section-card">
+
+                <div class="section-title">
+
+                    <span>★</span>
+
+                    Key Evidence Highlights
+
+                </div>
+
+
+                <div class="evidence-list">
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Property Documents
+                            </strong>
+
+                            <span>
+                                Ownership documents verified
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            ▣
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                CCTV Evidence
+                            </strong>
+
+                            <span>
+                                CCTV footage uploaded successfully
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Witness Statements
+                            </strong>
+
+                            <span>
+                                Witness statement available
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="evidence-item">
+
+                        <div class="evidence-icon">
+                            ▤
+                        </div>
+
+                        <div>
+
+                            <strong>
+                                Communication Records
+                            </strong>
+
+                            <span>
+                                Mobile communication records attached
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 HEARING SUMMARY
+            ================================================== -->
+
+            <section class="section-card">
+
+                <div class="section-title">
+
+                    <span>◷</span>
+
+                    Hearing Summary
+
+                </div>
+
+
+                <div class="hearing-box">
+
+
+                    <div class="hearing-detail">
+
+                        <span>
+                            NEXT HEARING
+                        </span>
+
+                        <strong>
+                            20 August 2026
+                        </strong>
+
+                    </div>
+
+
+                    <div class="hearing-detail">
+
+                        <span>
+                            COURT
+                        </span>
+
+                        <strong>
+                            District Court, Dindigul
+                        </strong>
+
+                    </div>
+
+
+                    <div class="hearing-detail">
+
+                        <span>
+                            TIME
+                        </span>
+
+                        <strong>
+                            10:30 AM
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 DISCLAIMER
+            ================================================== -->
+
+            <section class="section-card"
+                     style="background:#fff7ed;border-color:#fed7aa;">
+
+                <div style="font-size:14px;font-weight:700;color:#9a3412;margin-bottom:8px;">
+
+                    ⚠ Important Notice
+
+                </div>
+
+
+                <p style="font-size:13px;line-height:1.7;color:#7c2d12;">
+
+                    The AI-generated case summary and legal recommendations
+                    are intended for informational and research purposes only.
+                    They should not be considered a substitute for professional
+                    legal advice. Always verify legal information with a
+                    qualified legal professional.
+
+                </p>
+
+            </section>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+</body>
+</html>

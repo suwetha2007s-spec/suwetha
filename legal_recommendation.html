@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Legal Section Recommendation | AI Courtroom Assistant</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        /* =====================================================
+           MAIN LAYOUT
+        ===================================================== */
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+            padding: 22px 14px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 18px;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .logo h2 {
+            font-size: 17px;
+            margin-bottom: 3px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+
+        /* =====================================================
+           SIDEBAR LINKS
+        ===================================================== */
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 12px;
+            color: #d1d5db;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .sidebar-link:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .sidebar-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .sidebar-footer {
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logout-link:hover {
+            background: #7f1d1d;
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        .main-content {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           TOP NAVBAR
+        ===================================================== */
+
+        .top-navbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+        }
+
+        .page-title-small {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .user-text strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .user-text span {
+            display: block;
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+
+        /* =====================================================
+           PAGE CONTENT
+        ===================================================== */
+
+        .page-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+
+        /* =====================================================
+           HERO HEADER
+        ===================================================== */
+
+        .hero-section {
+            background: linear-gradient(
+                135deg,
+                #172554,
+                #1d4ed8,
+                #2563eb
+            );
+
+            color: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.18);
+        }
+
+        .hero-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.16);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 16px;
+        }
+
+        .hero-section h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .hero-section p {
+            color: #dbeafe;
+            max-width: 750px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           GRID
+        ===================================================== */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            border: 1px solid #e5e7eb;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .card-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 11px;
+            background: #eff6ff;
+            color: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-header h2 {
+            font-size: 19px;
+            color: #172033;
+        }
+
+        .card-header p {
+            color: #6b7280;
+            font-size: 13px;
+            margin-top: 3px;
+        }
+
+
+        /* =====================================================
+           FORM
+        ===================================================== */
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            background: #f9fafb;
+            font-size: 14px;
+            color: #172033;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: #2563eb;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .form-textarea {
+            min-height: 170px;
+            resize: vertical;
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 6px;
+        }
+
+
+        /* =====================================================
+           BUTTON
+        ===================================================== */
+
+        .recommend-button {
+            width: 100%;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .recommend-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           RESULT CARD
+        ===================================================== */
+
+        .recommendation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .recommendation-item {
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 18px;
+            background: #f8fafc;
+        }
+
+        .recommendation-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            padding: 6px 10px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .recommendation-item h3 {
+            font-size: 16px;
+            color: #172554;
+            margin-top: 10px;
+        }
+
+        .recommendation-item p {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 8px;
+        }
+
+        .confidence {
+            font-size: 12px;
+            font-weight: 700;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 6px 9px;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            text-align: center;
+            padding: 45px 20px;
+            color: #9ca3af;
+        }
+
+        .empty-icon {
+            font-size: 42px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+
+        /* =====================================================
+           INFORMATION BOX
+        ===================================================== */
+
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .info-box strong {
+            color: #1e40af;
+            font-size: 13px;
+        }
+
+        .info-box p {
+            color: #4b5563;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 5px;
+        }
+
+
+        /* =====================================================
+           DISCLAIMER
+        ===================================================== */
+
+        .disclaimer {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 14px;
+            padding: 18px;
+            margin-top: 24px;
+        }
+
+        .disclaimer strong {
+            color: #9a3412;
+            font-size: 14px;
+        }
+
+        .disclaimer p {
+            color: #7c2d12;
+            font-size: 12px;
+            line-height: 1.6;
+            margin-top: 6px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+            }
+
+            .app-layout {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .top-navbar {
+                padding: 0 15px;
+            }
+
+            .page-content {
+                padding: 15px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app-layout">
+
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sidebar-link">
+
+                <span>▣</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ask') }}"
+               class="sidebar-link">
+
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_documents') }}"
+               class="sidebar-link">
+
+                <span>▤</span>
+                <span>Legal Document</span>
+
+            </a>
+
+
+            <a href="{{ url_for('evidence_manager') }}"
+               class="sidebar-link">
+
+                <span>◈</span>
+                <span>Evidence Manager</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_tracker') }}"
+               class="sidebar-link">
+
+                <span>◫</span>
+                <span>Case Tracker</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ranking') }}"
+               class="sidebar-link">
+
+                <span>★</span>
+                <span>Ranking & Insights</span>
+
+            </a>
+
+
+            <a href="{{ url_for('multi_language') }}"
+               class="sidebar-link">
+
+                <span>文</span>
+                <span>Multi-language Support</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ai_case_summary') }}"
+               class="sidebar-link">
+
+                <span>▣</span>
+                <span>AI Case Summary</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_section') }}"
+               class="sidebar-link active">
+
+                <span>§</span>
+                <span>Legal Section Recommendation</span>
+
+            </a>
+
+
+            <a href="{{ url_for('hearing_reminder') }}"
+               class="sidebar-link">
+
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_timeline') }}"
+               class="sidebar-link">
+
+                <span>◌</span>
+                <span>Case Timeline</span>
+
+            </a>
+
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link">
+
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+
+            </a>
+
+
+            <a href="{{ url_for('smart_search') }}"
+               class="sidebar-link">
+
+                <span>⌕</span>
+                <span>Smart Search</span>
+
+            </a>
+
+
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+
+                <span>▥</span>
+                <span>Report Generator</span>
+
+            </a>
+
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+
+                <span>♢</span>
+                <span>Notification Center</span>
+
+            </a>
+
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+
+                <span>♩</span>
+                <span>Voice Query</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+
+            </a>
+
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+
+            </a>
+
+
+            <!-- IMPORTANT:
+                 Your Flask endpoint is risk_analyser,
+                 NOT risk_analyzer.
+            -->
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+
+                <span>⚠</span>
+                <span>Case Risk Analyzer</span>
+
+            </a>
+
+
+            <div class="sidebar-footer">
+
+                <a href="{{ url_for('logout') }}"
+                   class="sidebar-link logout-link">
+
+                    <span>⇥</span>
+                    <span>Logout</span>
+
+                </a>
+
+            </div>
+
+        </nav>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="top-navbar">
+
+            <div class="page-title-small">
+                Legal Intelligence &nbsp; / &nbsp;
+                Section Recommendation
+            </div>
+
+
+            <div class="user-area">
+
+                <div class="user-avatar">
+
+                    {{ session.get('username', 'S')[0]|upper }}
+
+                </div>
+
+                <div class="user-text">
+
+                    <strong>
+                        {{ session.get('username', 'Suwetha') }}
+                    </strong>
+
+                    <span>
+                        Legal User
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             PAGE CONTENT
+        ================================================== -->
+
+        <div class="page-content">
+
+
+            <!-- HERO -->
+
+            <section class="hero-section">
+
+                <div class="hero-icon">
+                    §
+                </div>
+
+                <h1>
+                    Legal Section Recommendation
+                </h1>
+
+                <p>
+                    Analyze case information and identify potentially
+                    relevant legal sections. The system assists users
+                    by organizing legal information based on the
+                    details provided.
+                </p>
+
+            </section>
+
+
+
+            <!-- TWO COLUMN CONTENT -->
+
+            <div class="content-grid">
+
+
+                <!-- =================================================
+                     CASE INPUT
+                ================================================= -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div class="card-icon">
+                            ⚖
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Case Information
+                            </h2>
+
+                            <p>
+                                Enter the details of the case
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <form method="POST"
+                          action="{{ url_for('legal_section') }}">
+
+
+                        <div class="form-group">
+
+                            <label for="case_id">
+                                Case ID
+                            </label>
+
+                            <input
+                                type="text"
+                                id="case_id"
+                                name="case_id"
+                                class="form-input"
+                                placeholder="Example: C1024">
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="case_type">
+                                Case Type
+                            </label>
+
+                            <select
+                                id="case_type"
+                                name="case_type"
+                                class="form-select">
+
+                                <option value="">
+                                    Select case type
+                                </option>
+
+                                <option value="Criminal">
+                                    Criminal
+                                </option>
+
+                                <option value="Civil">
+                                    Civil
+                                </option>
+
+                                <option value="Family">
+                                    Family
+                                </option>
+
+                                <option value="Property">
+                                    Property
+                                </option>
+
+                                <option value="Cyber Crime">
+                                    Cyber Crime
+                                </option>
+
+                                <option value="Consumer">
+                                    Consumer
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="case_description">
+                                Case Description
+                            </label>
+
+                            <textarea
+                                id="case_description"
+                                name="case_description"
+                                class="form-textarea"
+                                placeholder="Enter the important facts, circumstances, evidence and other relevant details of the case..."
+                                required></textarea>
+
+                            <div class="form-help">
+                                Provide as much relevant information as possible
+                                for better recommendation.
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="recommend-button">
+
+                            ✦ &nbsp; Recommend Legal Sections
+
+                        </button>
+
+
+                    </form>
+
+
+                    <div class="info-box">
+
+                        <strong>
+                            How it works
+                        </strong>
+
+                        <p>
+                            The system examines the information entered
+                            by the user and presents potentially relevant
+                            legal sections along with descriptions and
+                            confidence indicators.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     RECOMMENDATION RESULT
+                ================================================== -->
+
+                <div class="card">
+
+                    <div class="card-header">
+
+                        <div class="card-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                Recommended Sections
+                            </h2>
+
+                            <p>
+                                Potentially relevant legal provisions
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if recommendations %}
+
+
+                    <div class="recommendation-list">
+
+                        {% for recommendation in recommendations %}
+
+                        <div class="recommendation-item">
+
+                            <div class="recommendation-top">
+
+                                <div>
+
+                                    <span class="section-badge">
+
+                                        {{ recommendation.section }}
+
+                                    </span>
+
+                                    <h3>
+
+                                        {{ recommendation.title }}
+
+                                    </h3>
+
+                                </div>
+
+
+                                {% if recommendation.confidence %}
+
+                                <span class="confidence">
+
+                                    {{ recommendation.confidence }}%
+
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <p>
+
+                                {{ recommendation.description }}
+
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {% elif recommended_sections %}
+
+
+                    <div class="recommendation-list">
+
+                        {% for section in recommended_sections %}
+
+                        <div class="recommendation-item">
+
+                            <div class="recommendation-top">
+
+                                <div>
+
+                                    <span class="section-badge">
+
+                                        {{ section.section }}
+
+                                    </span>
+
+                                    <h3>
+
+                                        {{ section.title }}
+
+                                    </h3>
+
+                                </div>
+
+                                {% if section.confidence %}
+
+                                <span class="confidence">
+
+                                    {{ section.confidence }}%
+
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+                            <p>
+
+                                {{ section.description }}
+
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    {% else %}
+
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            §
+                        </div>
+
+                        <h3>
+                            No Recommendations Yet
+                        </h3>
+
+                        <p>
+                            Enter the case details on the left and
+                            click "Recommend Legal Sections" to view
+                            potentially relevant legal provisions.
+                        </p>
+
+                    </div>
+
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 LEGAL ANALYSIS INFORMATION
+            ================================================== -->
+
+            <div class="card">
+
+                <div class="card-header">
+
+                    <div class="card-icon">
+                        ◈
+                    </div>
+
+                    <div>
+
+                        <h2>
+                            Legal Analysis
+                        </h2>
+
+                        <p>
+                            AI-assisted legal information overview
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="recommendation-list">
+
+                    <div class="recommendation-item">
+
+                        <span class="section-badge">
+                            Section Matching
+                        </span>
+
+                        <h3>
+                            Relevant Legal Provisions
+                        </h3>
+
+                        <p>
+                            The system can help organize potentially
+                            relevant sections based on the facts,
+                            case type and information entered by the user.
+                        </p>
+
+                    </div>
+
+
+                    <div class="recommendation-item">
+
+                        <span class="section-badge">
+                            Evidence Analysis
+                        </span>
+
+                        <h3>
+                            Evidence-Based Assessment
+                        </h3>
+
+                        <p>
+                            Important evidence and case information can
+                            be considered when preparing an initial
+                            recommendation for review.
+                        </p>
+
+                    </div>
+
+
+                    <div class="recommendation-item">
+
+                        <span class="section-badge">
+                            Human Review
+                        </span>
+
+                        <h3>
+                            Professional Verification
+                        </h3>
+
+                        <p>
+                            Recommended sections should always be
+                            verified against the applicable law and
+                            reviewed by a qualified legal professional.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- =================================================
+                 DISCLAIMER
+            ================================================== -->
+
+            <div class="disclaimer">
+
+                <strong>
+                    ⚠ Important Legal Notice
+                </strong>
+
+                <p>
+                    This feature provides AI-assisted informational
+                    support and is not a substitute for professional
+                    legal advice. Legal provisions may change over
+                    time. Always verify the applicable law and consult
+                    a qualified legal professional before making legal
+                    decisions.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="footer">
+
+            © 2026 AI Powered Courtroom Assistant
+            &nbsp; | &nbsp;
+            AI-based Legal Guidance & Case Management
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

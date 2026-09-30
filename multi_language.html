@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Multi-language Support | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .language-page {
+            padding: 30px;
+        }
+
+        .language-header {
+            margin-bottom: 25px;
+        }
+
+        .language-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .language-header p {
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .language-card {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .language-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .language-card.selected {
+            border: 2px solid #1976d2;
+            background: #f5f9ff;
+        }
+
+        .language-icon {
+            font-size: 35px;
+            margin-bottom: 12px;
+        }
+
+        .language-card h3 {
+            margin: 8px 0;
+        }
+
+        .language-card p {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .language-card button {
+            margin-top: 10px;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .translation-card {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        }
+
+        .translation-card h2 {
+            margin-top: 0;
+        }
+
+        .translation-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .translation-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .translation-box label {
+            font-weight: 600;
+        }
+
+        .translation-box textarea {
+            min-height: 180px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            resize: vertical;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .translation-controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .translation-controls select {
+            padding: 11px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .translation-controls button {
+            border: none;
+            padding: 11px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .primary-button {
+            background: #1976d2;
+            color: white;
+        }
+
+        .secondary-button {
+            background: #eeeeee;
+            color: #333;
+        }
+
+        .primary-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .selected-language {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f7f7f7;
+            border-radius: 10px;
+        }
+
+        .selected-language strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .translation-status {
+            margin-top: 12px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .language-info {
+            margin-top: 25px;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        }
+
+        .language-info ul {
+            padding-left: 20px;
+            line-height: 1.8;
+        }
+
+        .legal-disclaimer {
+            margin-top: 25px;
+        }
+
+        @media (max-width: 900px) {
+
+            .language-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .translation-area {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .language-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="app-layout">
+
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+
+                <h2>
+                    AI Courtroom
+                </h2>
+
+                <p>
+                    Legal Assistant
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}"
+               class="sidebar-link">
+
+                <span>▣</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ask') }}"
+               class="sidebar-link">
+
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+
+            </a>
+
+
+            <a href="{{ url_for('legal_documents') }}"
+               class="sidebar-link">
+
+                <span>▤</span>
+                <span>Legal Documents</span>
+
+            </a>
+
+
+            <a href="{{ url_for('evidence_manager') }}"
+               class="sidebar-link">
+
+                <span>◈</span>
+                <span>Evidence Manager</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_tracker') }}"
+               class="sidebar-link">
+
+                <span>◫</span>
+                <span>Case Tracker</span>
+
+            </a>
+
+
+            <a href="{{ url_for('ranking') }}"
+               class="sidebar-link">
+
+                <span>★</span>
+                <span>Ranking &amp; Insights</span>
+
+            </a>
+
+
+            <a href="{{ url_for('multi_language') }}"
+               class="sidebar-link active">
+
+                <span>文</span>
+                <span>Multi-language Support</span>
+
+            </a>
+
+
+            
+            
+
+            <a href="{{ url_for('hearing_reminder') }}"
+               class="sidebar-link">
+
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_timeline') }}"
+               class="sidebar-link">
+
+                <span>◌</span>
+                <span>Case Timeline</span>
+
+            </a>
+
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link">
+
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+
+            </a>
+
+
+           
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+
+                <span>▥</span>
+                <span>Report Generator</span>
+
+            </a>
+
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+
+                <span>♢</span>
+                <span>Notification Center</span>
+
+            </a>
+
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+
+                <span>♩</span>
+                <span>Voice Query</span>
+
+            </a>
+
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+
+            </a>
+
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+
+            </a>
+
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle"
+                        id="menuToggle">
+
+                    ☰
+
+                </button>
+
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                
+
+
+                
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+
+                        {{ session.get('username', 'S')[0]|upper }}
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong>
+
+                            {{ session.get('username', 'Suwetha') }}
+
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- PAGE CONTENT -->
+
+        <div class="page-content language-page">
+
+
+            <div class="language-header">
+
+                <h1>
+                    🌐 Multi-language Support
+                </h1>
+
+                <p>
+                    Access legal information and courtroom assistance
+                    in multiple languages.
+                </p>
+
+            </div>
+
+
+
+            <!-- LANGUAGE CARDS -->
+
+            <div class="language-grid">
+
+
+                <div
+                    class="language-card"
+                    id="englishCard"
+                    onclick="selectLanguage('English')"
+                >
+
+                    <div class="language-icon">
+                        🇬🇧
+                    </div>
+
+                    <h3>
+                        English
+                    </h3>
+
+                    <p>
+                        Access legal information in English.
+                    </p>
+
+                    <button type="button">
+                        Select
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="language-card"
+                    id="tamilCard"
+                    onclick="selectLanguage('Tamil')"
+                >
+
+                    <div class="language-icon">
+                        🇮🇳
+                    </div>
+
+                    <h3>
+                        தமிழ்
+                    </h3>
+
+                    <p>
+                        சட்ட தகவல்களை தமிழில் பெறுங்கள்.
+                    </p>
+
+                    <button type="button">
+                        தேர்வு செய்க
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="language-card"
+                    id="hindiCard"
+                    onclick="selectLanguage('Hindi')"
+                >
+
+                    <div class="language-icon">
+                        🇮🇳
+                    </div>
+
+                    <h3>
+                        हिन्दी
+                    </h3>
+
+                    <p>
+                        कानूनी जानकारी हिंदी में प्राप्त करें।
+                    </p>
+
+                    <button type="button">
+                        चुनें
+                    </button>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- TRANSLATION -->
+
+            <div class="translation-card">
+
+                <h2>
+                    Language Translation
+                </h2>
+
+                <p>
+                    Enter text below and select the languages you want
+                    to use.
+                </p>
+
+
+                <div class="translation-area">
+
+
+                    <div class="translation-box">
+
+                        <label for="sourceText">
+                            Source Text
+                        </label>
+
+                        <textarea
+                            id="sourceText"
+                            placeholder="Enter legal question or text here..."
+                        ></textarea>
+
+                    </div>
+
+
+                    <div class="translation-box">
+
+                        <label for="translatedText">
+                            Translated Text
+                        </label>
+
+                        <textarea
+                            id="translatedText"
+                            placeholder="Translation will appear here..."
+                            readonly
+                        ></textarea>
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="translation-controls">
+
+
+                    <select id="sourceLanguage">
+
+                        <option value="English">
+                            English
+                        </option>
+
+                        <option value="Tamil">
+                            Tamil
+                        </option>
+
+                        <option value="Hindi">
+                            Hindi
+                        </option>
+
+                    </select>
+
+
+                    <select id="targetLanguage">
+
+                        <option value="Tamil">
+                            Tamil
+                        </option>
+
+                        <option value="English">
+                            English
+                        </option>
+
+                        <option value="Hindi">
+                            Hindi
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        type="button"
+                        class="primary-button"
+                        id="translateButton"
+                        onclick="translateText()"
+                    >
+
+                        Translate
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        onclick="clearTranslation()"
+                    >
+
+                        Clear
+
+                    </button>
+
+
+                </div>
+
+
+                <div
+                    class="selected-language"
+                    id="selectedLanguage"
+                >
+
+                    <strong>
+                        Current Language
+                    </strong>
+
+                    English
+
+                </div>
+
+
+                <div
+                    class="translation-status"
+                    id="translationStatus"
+                ></div>
+
+            </div>
+
+
+
+            <!-- FEATURES -->
+
+            <div class="language-info">
+
+                <h2>
+                    Supported Language Features
+                </h2>
+
+                <ul>
+
+                    <li>
+                        Legal questions can be entered in supported languages.
+                    </li>
+
+                    <li>
+                        Courtroom information can be displayed in different languages.
+                    </li>
+
+                    <li>
+                        Users can switch between English, Tamil and Hindi.
+                    </li>
+
+                    <li>
+                        Multilingual support can improve accessibility for rural communities.
+                    </li>
+
+                    <li>
+                        Voice and text-based interaction can be extended to supported languages.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="legal-disclaimer">
+
+                <strong>
+                    Important Notice
+                </strong>
+
+                <p>
+                    Translation and language assistance are intended for
+                    informational purposes. Always verify important legal
+                    information using official legal sources or with a
+                    qualified legal professional.
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+<script>
+
+    let currentLanguage = "English";
+
+
+    function selectLanguage(language) {
+
+        currentLanguage = language;
+
+        document.getElementById(
+            "selectedLanguage"
+        ).innerHTML =
+            "<strong>Current Language</strong>" +
+            language;
+
+
+        document.getElementById(
+            "sourceLanguage"
+        ).value = language;
+
+
+        document.getElementById(
+            "languageSelector"
+        ).value = language;
+
+
+        document.querySelectorAll(
+            ".language-card"
+        ).forEach(function(card) {
+
+            card.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+        if (language === "English") {
+
+            document.getElementById(
+                "englishCard"
+            ).classList.add("selected");
+
+        }
+
+        else if (language === "Tamil") {
+
+            document.getElementById(
+                "tamilCard"
+            ).classList.add("selected");
+
+        }
+
+        else if (language === "Hindi") {
+
+            document.getElementById(
+                "hindiCard"
+            ).classList.add("selected");
+
+        }
+
+
+        saveLanguage(language);
+    }
+
+
+    function selectLanguageFromTop(language) {
+
+        selectLanguage(language);
+
+    }
+
+
+    async function saveLanguage(language) {
+
+        try {
+
+            await fetch(
+                "{{ url_for('change_language') }}",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    credentials:
+                        "same-origin",
+
+                    body: JSON.stringify({
+                        language: language
+                    })
+                }
+            );
+
+        }
+
+        catch (error) {
+
+            console.log(
+                "Language save error:",
+                error
+            );
+
+        }
+
+    }
+
+
+    async function translateText() {
+
+        const sourceText =
+            document.getElementById(
+                "sourceText"
+            ).value.trim();
+
+
+        const sourceLanguage =
+            document.getElementById(
+                "sourceLanguage"
+            ).value;
+
+
+        const targetLanguage =
+            document.getElementById(
+                "targetLanguage"
+            ).value;
+
+
+        const output =
+            document.getElementById(
+                "translatedText"
+            );
+
+
+        const button =
+            document.getElementById(
+                "translateButton"
+            );
+
+
+        const status =
+            document.getElementById(
+                "translationStatus"
+            );
+
+
+        if (!sourceText) {
+
+            output.value =
+                "Please enter text to translate.";
+
+            return;
+
+        }
+
+
+        if (sourceLanguage === targetLanguage) {
+
+            output.value =
+                sourceText;
+
+            status.innerText =
+                "Source and target languages are the same.";
+
+            return;
+
+        }
+
+
+        button.disabled = true;
+
+        button.innerText =
+            "Translating...";
+
+
+        output.value =
+            "Please wait...";
+
+
+        status.innerText =
+            "AI is translating using Ollama...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "{{ url_for('translate_api') }}",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            "Accept":
+                                "application/json"
+
+                        },
+
+                        credentials:
+                            "same-origin",
+
+                        body: JSON.stringify({
+
+                            text: sourceText,
+                            source_language:
+                            sourceLanguage,
+                                language: targetLanguage
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                output.value =
+                    data.translation;
+
+                status.innerText =
+                    "Translation completed successfully.";
+
+            }
+
+            else {
+
+                output.value =
+                    data.message ||
+                    "Translation failed.";
+
+                status.innerText =
+                    "Translation failed.";
+
+            }
+
+        }
+
+        catch (error) {
+
+            console.error(
+                "Translation error:",
+                error
+            );
+
+
+            output.value =
+                "Translation service is unavailable.";
+
+
+            status.innerText =
+                "Please check whether Ollama is running.";
+
+        }
+
+
+        button.disabled = false;
+
+        button.innerText =
+            "Translate";
+
+    }
+
+
+    function clearTranslation() {
+
+        document.getElementById(
+            "sourceText"
+        ).value = "";
+
+
+        document.getElementById(
+            "translatedText"
+        ).value = "";
+
+
+        document.getElementById(
+            "translationStatus"
+        ).innerText = "";
+
+    }
+
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            selectLanguage("English");
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>

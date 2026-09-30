@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate Detection - AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f7fb;
+            color: #1e293b;
+        }
+
+        .main-content {
+            min-width: 0;
+        }
+
+        .page-content {
+            padding: 28px;
+        }
+
+        .duplicate-page {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .welcome-small {
+            color: #2563eb;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .page-heading h1 {
+            font-size: 27px;
+            margin: 10px 0;
+            color: #0f172a;
+        }
+
+        .page-heading p {
+            color: #64748b;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .duplicate-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+        }
+
+        .duplicate-card,
+        .result-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 26px;
+            box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+        }
+
+        .duplicate-card h2,
+        .result-card h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #0f172a;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 24px;
+        }
+
+        .upload-area {
+            display: block;
+            padding: 35px 20px;
+            border: 2px dashed #93c5fd;
+            border-radius: 14px;
+            background: #f8fbff;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .upload-area:hover {
+            background: #eff6ff;
+            border-color: #2563eb;
+        }
+
+        .upload-icon {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 16px;
+            font-size: 30px;
+        }
+
+        .upload-area h3 {
+            margin: 0 0 8px;
+            font-size: 17px;
+        }
+
+        .upload-area p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 18px;
+        }
+
+        #documentFiles {
+            display: none;
+        }
+
+        .primary-button,
+        .secondary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+
+        .primary-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .primary-button:hover {
+            background: #1d4ed8;
+        }
+
+        .secondary-button {
+            background: #eff6ff;
+            color: #2563eb;
+            border: 1px solid #bfdbfe;
+        }
+
+        .secondary-button:hover {
+            background: #dbeafe;
+        }
+
+        .full-button {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .selected-files {
+            margin-top: 18px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 13px;
+        }
+
+        .file-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            overflow-wrap: anywhere;
+        }
+
+        .file-icon {
+            color: #2563eb;
+            font-size: 20px;
+        }
+
+        .remove-file {
+            border: none;
+            background: #fee2e2;
+            color: #dc2626;
+            border-radius: 7px;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .method-box {
+            display: flex;
+            gap: 15px;
+            padding: 18px;
+            margin-bottom: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        .method-icon {
+            width: 42px;
+            height: 42px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            background: #dbeafe;
+            color: #2563eb;
+            border-radius: 10px;
+            font-size: 20px;
+        }
+
+        .method-box strong {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+        }
+
+        .method-box span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .result-card {
+            display: none;
+            margin-top: 25px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+
+        .status-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .result-box {
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+
+        .result-box span {
+            display: block;
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .result-box strong {
+            font-size: 26px;
+            color: #2563eb;
+        }
+
+        .duplicate-match {
+            padding: 20px;
+            margin-bottom: 14px;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            background: #f8fbff;
+        }
+
+        .duplicate-match h3 {
+            margin: 0 0 15px;
+            color: #1d4ed8;
+            font-size: 16px;
+        }
+
+        .duplicate-match p {
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .similarity {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 7px 12px;
+            border-radius: 7px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .no-duplicate {
+            padding: 22px;
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            color: #166534;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .legal-disclaimer {
+            margin-top: 25px;
+            padding: 20px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+        }
+
+        .legal-disclaimer strong {
+            color: #1d4ed8;
+        }
+
+        .legal-disclaimer p {
+            margin-bottom: 0;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .app-footer {
+            padding: 20px;
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1000px) {
+            .duplicate-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .page-content {
+                padding: 15px;
+            }
+
+            .page-heading {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .duplicate-card,
+            .result-card {
+                padding: 18px;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span><span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span><span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span><span>Legal Document</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span><span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span><span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span><span>Ranking & Insights</span>
+            </a>
+
+            
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span><span>AI Document Analyzer</span>
+            </a>
+
+            
+
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span><span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span><span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span><span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span><span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link active">
+                <span>▧</span><span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span><span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+                <span>⇥</span><span>Logout</span>
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+
+                <div class="search-wrapper">
+                    <span class="search-icon">⌕</span>
+                    <input type="text" id="globalSearch"
+                           placeholder="Search cases, documents, evidence...">
+                </div>
+            </div>
+
+            <div class="navbar-right">
+
+                
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+                        <span>Legal User</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </header>
+
+        <div class="page-content">
+
+            <div class="duplicate-page">
+
+                <!-- PAGE HEADING -->
+                <div class="page-heading">
+
+                    <div>
+                        <span class="welcome-small">
+                            DOCUMENT INTELLIGENCE
+                        </span>
+
+                        <h1>Duplicate Documents Detection</h1>
+
+                        <p>
+                            Identify potentially duplicate legal documents
+                            and organize your case records efficiently.
+                        </p>
+                    </div>
+
+                    <a href="{{ url_for('legal_document') }}"
+                       class="secondary-button">
+                        ← Legal Document
+                    </a>
+
+                </div>
+
+                <!-- MAIN GRID -->
+                <div class="duplicate-grid">
+
+                    <!-- UPLOAD CARD -->
+                    <div class="duplicate-card">
+
+                        <h2>Select Documents</h2>
+
+                        <p class="description">
+                            Select two or more legal documents to check
+                            for potential duplicate filenames.
+                        </p>
+
+                        <label for="documentFiles" class="upload-area">
+
+                            <div class="upload-icon">📑</div>
+
+                            <h3>Choose Documents</h3>
+
+                            <p>
+                                Select PDF, DOCX or TXT files from your
+                                computer
+                            </p>
+
+                            <span class="secondary-button">
+                                Browse Files
+                            </span>
+
+                        </label>
+
+                        <input type="file"
+                               id="documentFiles"
+                               multiple
+                               accept=".pdf,.doc,.docx,.txt">
+
+                        <div id="selectedFiles"
+                             class="selected-files"></div>
+
+                        <button type="button"
+                                id="checkButton"
+                                class="primary-button full-button">
+                            ◈ Check for Duplicates
+                        </button>
+
+                    </div>
+
+                    <!-- DETECTION METHOD -->
+                    <div class="duplicate-card">
+
+                        <h2>Detection Method</h2>
+
+                        <p class="description">
+                            Review how the document management module
+                            helps identify and organize possible
+                            duplicate records.
+                        </p>
+
+                        <div class="method-box">
+                            <div class="method-icon">📄</div>
+                            <div>
+                                <strong>File Comparison</strong>
+                                <span>
+                                    Compare the names of selected
+                                    documents to find possible matches.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="method-box">
+                            <div class="method-icon">🔍</div>
+                            <div>
+                                <strong>Duplicate Identification</strong>
+                                <span>
+                                    Highlight files with matching or
+                                    similar filenames.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="method-box">
+                            <div class="method-icon">📁</div>
+                            <div>
+                                <strong>Legal Record Management</strong>
+                                <span>
+                                    Helps organize case documents and
+                                    reduce repeated records.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="method-box">
+                            <div class="method-icon">✓</div>
+                            <div>
+                                <strong>Review Results</strong>
+                                <span>
+                                    Review potential matches before
+                                    making any document-management
+                                    decision.
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- RESULTS -->
+                <div id="resultCard" class="result-card">
+
+                    <div class="result-header">
+
+                        <h2>Duplicate Detection Results</h2>
+
+                        <span class="status-badge" id="resultStatus">
+                            Analysis Completed
+                        </span>
+
+                    </div>
+
+                    <div class="result-grid">
+
+                        <div class="result-box">
+                            <span>Documents Checked</span>
+                            <strong id="documentCount">0</strong>
+                        </div>
+
+                        <div class="result-box">
+                            <span>Potential Matches</span>
+                            <strong id="matchCount">0</strong>
+                        </div>
+
+                        <div class="result-box">
+                            <span>Detection Status</span>
+                            <strong id="detectionStatus">Ready</strong>
+                        </div>
+
+                    </div>
+
+                    <div id="matchResults"></div>
+
+                </div>
+
+                <!-- DISCLAIMER -->
+                <div class="legal-disclaimer">
+
+                    <strong>Important Notice</strong>
+
+                    <p>
+                        This feature identifies possible duplicates
+                        based on filenames only. Similar filenames do
+                        not prove that two documents have identical
+                        content or legal effect. Please verify documents
+                        before making any legal or administrative
+                        decision.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer class="app-footer">
+            <p>© 2026 AI Powered Courtroom Assistant</p>
+            <span>AI-based Legal Guidance &amp; Case Management</span>
+        </footer>
+
+    </main>
+
+</div>
+
+<script>
+    const documentFiles = document.getElementById("documentFiles");
+    const selectedFiles = document.getElementById("selectedFiles");
+    const checkButton = document.getElementById("checkButton");
+    const resultCard = document.getElementById("resultCard");
+
+    let selectedDocuments = [];
+
+    documentFiles.addEventListener("change", function () {
+        selectedDocuments = Array.from(this.files);
+        displayFiles();
+        resultCard.style.display = "none";
+    });
+
+    function displayFiles() {
+        selectedFiles.innerHTML = "";
+
+        selectedDocuments.forEach(function (file, index) {
+
+            const item = document.createElement("div");
+            item.className = "file-item";
+
+            const fileName = document.createElement("div");
+            fileName.className = "file-name";
+
+            const icon = document.createElement("span");
+            icon.className = "file-icon";
+            icon.textContent = "📄";
+
+            const name = document.createElement("span");
+            name.textContent = file.name;
+
+            fileName.appendChild(icon);
+            fileName.appendChild(name);
+
+            const remove = document.createElement("button");
+            remove.className = "remove-file";
+            remove.textContent = "✕";
+            remove.type = "button";
+            remove.title = "Remove file";
+
+            remove.onclick = function () {
+                selectedDocuments.splice(index, 1);
+                displayFiles();
+                resultCard.style.display = "none";
+            };
+
+            item.appendChild(fileName);
+            item.appendChild(remove);
+
+            selectedFiles.appendChild(item);
+        });
+    }
+
+    checkButton.addEventListener("click", function () {
+
+        if (selectedDocuments.length < 2) {
+            alert("Please select at least two documents.");
+            return;
+        }
+
+        resultCard.style.display = "block";
+
+        document.getElementById("documentCount").textContent =
+            selectedDocuments.length;
+
+        document.getElementById("detectionStatus").textContent =
+            "Completed";
+
+        const matches = [];
+
+        for (let i = 0; i < selectedDocuments.length; i++) {
+
+            for (let j = i + 1; j < selectedDocuments.length; j++) {
+
+                const first = selectedDocuments[i].name.toLowerCase();
+                const second = selectedDocuments[j].name.toLowerCase();
+
+                const firstBase = first
+                    .replace(/\.[^/.]+$/, "")
+                    .replace(/[\s_-]/g, "");
+
+                const secondBase = second
+                    .replace(/\.[^/.]+$/, "")
+                    .replace(/[\s_-]/g, "");
+
+                if (
+                    firstBase === secondBase ||
+                    first.includes(secondBase) ||
+                    second.includes(firstBase)
+                ) {
+                    matches.push({
+                        first: selectedDocuments[i].name,
+                        second: selectedDocuments[j].name
+                    });
+                }
+            }
+        }
+
+        document.getElementById("matchCount").textContent =
+            matches.length;
+
+        const matchResults = document.getElementById("matchResults");
+        matchResults.innerHTML = "";
+
+        if (matches.length === 0) {
+
+            const noMatch = document.createElement("div");
+            noMatch.className = "no-duplicate";
+
+            noMatch.innerHTML =
+                "<strong>No obvious duplicate filenames detected.</strong>" +
+                "<br><br>" +
+                "No matching filenames were found among the selected files. " +
+                "This does not guarantee that the document contents are different.";
+
+            matchResults.appendChild(noMatch);
+
+        } else {
+
+            matches.forEach(function (match) {
+
+                const box = document.createElement("div");
+                box.className = "duplicate-match";
+
+                const heading = document.createElement("h3");
+                heading.textContent = "⚠ Potential Duplicate";
+
+                const first = document.createElement("p");
+                first.textContent = "Document 1: " + match.first;
+
+                const second = document.createElement("p");
+                second.textContent = "Document 2: " + match.second;
+
+                const similarity = document.createElement("div");
+                similarity.className = "similarity";
+                similarity.textContent = "Matching filename detected";
+
+                box.appendChild(heading);
+                box.appendChild(first);
+                box.appendChild(second);
+                box.appendChild(similarity);
+
+                matchResults.appendChild(box);
+            });
+        }
+
+        resultCard.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+</script>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

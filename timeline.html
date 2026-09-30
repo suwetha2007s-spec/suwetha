@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Case Timeline - AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .timeline-page {
+            padding: 30px;
+        }
+
+        .timeline-header {
+            margin-bottom: 25px;
+        }
+
+        .timeline-header h1 {
+            margin: 5px 0 8px;
+            font-size: 30px;
+        }
+
+        .timeline-header p {
+            color: #777;
+            margin: 0;
+        }
+
+        .timeline-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .timeline-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .timeline-card-header h2 {
+            margin: 0 0 5px;
+        }
+
+        .timeline-card-header p {
+            margin: 0;
+            color: #777;
+        }
+
+        .case-select {
+            padding: 11px 15px;
+            border: 1px solid #ddd;
+            border-radius: 9px;
+            background: white;
+            min-width: 180px;
+            font-size: 14px;
+        }
+
+        .timeline {
+            position: relative;
+            margin-top: 20px;
+            padding-left: 35px;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 10px;
+            top: 5px;
+            bottom: 5px;
+            width: 2px;
+            background: #ddd;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -31px;
+            top: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #6c63ff;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #6c63ff;
+        }
+
+        .timeline-date {
+            font-size: 13px;
+            color: #6c63ff;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 17px 20px;
+            background: #fafafa;
+        }
+
+        .timeline-content h3 {
+            margin: 0 0 7px;
+            font-size: 17px;
+        }
+
+        .timeline-content p {
+            margin: 0;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #f0efff;
+            color: #5b52d6;
+            font-size: 12px;
+        }
+
+        .overview-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .overview-box {
+            padding: 20px;
+            border-radius: 12px;
+            background: #fafafa;
+            border: 1px solid #eee;
+        }
+
+        .overview-box span {
+            display: block;
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .overview-box strong {
+            font-size: 20px;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 17px;
+            border-radius: 9px;
+            background: #6c63ff;
+            color: white;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .empty-timeline {
+            text-align: center;
+            padding: 45px 10px;
+            color: #777;
+        }
+
+        @media (max-width: 800px) {
+
+            .timeline-page {
+                padding: 18px;
+            }
+
+            .timeline-card-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .overview-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <div class="logo-icon">
+                ⚖
+            </div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+
+        </div>
+
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Document</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            <a href="{{ url_for('ai_case_summary') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>AI Case Summary</span>
+            </a>
+
+            <a href="{{ url_for('legal_section') }}" class="sidebar-link">
+                <span>§</span>
+                <span>Legal Section Recommendation</span>
+            </a>
+
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}"
+               class="sidebar-link active">
+
+                <span>◌</span>
+                <span>Case Timeline</span>
+
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}"
+               class="sidebar-link">
+
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+
+            </a>
+
+            <a href="{{ url_for('smart_search') }}"
+               class="sidebar-link">
+
+                <span>⌕</span>
+                <span>Smart Search</span>
+
+            </a>
+
+            <a href="{{ url_for('report_generator') }}"
+               class="sidebar-link">
+
+                <span>▥</span>
+                <span>Report Generator</span>
+
+            </a>
+
+            <a href="{{ url_for('notifications') }}"
+               class="sidebar-link">
+
+                <span>♢</span>
+                <span>Notification Center</span>
+
+            </a>
+
+            <a href="{{ url_for('voice_query') }}"
+               class="sidebar-link">
+
+                <span>♩</span>
+                <span>Voice Query</span>
+
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}"
+               class="sidebar-link">
+
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}"
+               class="sidebar-link">
+
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}"
+               class="sidebar-link">
+
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                <select class="language-selector">
+
+                    <option value="en">
+                        English
+                    </option>
+
+                    <option value="ta">
+                        தமிழ்
+                    </option>
+
+                    <option value="hi">
+                        हिन्दी
+                    </option>
+
+                </select>
+
+
+                <a
+    href="{{ url_for('notifications') }}"
+    class="notifications-button"
+    id="notificationButton"
+>
+    🔔
+    <span class="notifications-count">3</span>
+</a>
+
+                    <span class="notification-count">
+                        3
+                    </span>
+
+                </button>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+
+                        {{ session.get('username', 'S')[0]|upper }}
+
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE CONTENT ================= -->
+
+        <div class="page-content timeline-page">
+
+            <!-- HEADER -->
+
+            <div class="timeline-header">
+
+                <span class="welcome-small">
+                    CASE MANAGEMENT
+                </span>
+
+                <h1>
+                    Case Timeline
+                </h1>
+
+                <p>
+                    Track important case events and activities
+                    in chronological order.
+                </p>
+
+            </div>
+
+
+            <!-- CASE OVERVIEW -->
+
+            <div class="timeline-card">
+
+                <div class="timeline-card-header">
+
+                    <div>
+
+                        <h2>
+                            Case Timeline
+                        </h2>
+
+                        <p>
+                            Select a case to view its important events.
+                        </p>
+
+                    </div>
+
+
+                    <select
+                        class="case-select"
+                        id="caseSelect"
+                        onchange="changeCase()">
+
+                        <option value="C1024">
+                            C1024 - State Vs. Ramesh
+                        </option>
+
+                        <option value="C1023">
+                            C1023 - Kumar Vs. State
+                        </option>
+
+                        <option value="C1022">
+                            C1022 - Priya Vs. Kumar
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="overview-grid">
+
+                    <div class="overview-box">
+
+                        <span>
+                            Case Number
+                        </span>
+
+                        <strong id="caseNumber">
+                            C1024
+                        </strong>
+
+                    </div>
+
+
+                    <div class="overview-box">
+
+                        <span>
+                            Case Type
+                        </span>
+
+                        <strong id="caseType">
+                            Criminal
+                        </strong>
+
+                    </div>
+
+
+                    <div class="overview-box">
+
+                        <span>
+                            Current Status
+                        </span>
+
+                        <strong id="caseStatus">
+                            Active
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- TIMELINE -->
+
+            <div class="timeline-card">
+
+                <div class="timeline-card-header">
+
+                    <div>
+
+                        <h2>
+                            Important Events
+                        </h2>
+
+                        <p>
+                            Chronological case history
+                        </p>
+
+                    </div>
+
+                    <a
+                        href="{{ url_for('case_tracker') }}"
+                        class="back-button">
+
+                        View Case Tracker
+
+                    </a>
+
+                </div>
+
+
+                <div class="timeline" id="timelineContainer">
+
+                    <!-- EVENT 1 -->
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-date">
+                            05 August 2026
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <h3>
+                                Case Registered
+                            </h3>
+
+                            <p>
+                                The case was registered in the
+                                courtroom assistant system.
+                            </p>
+
+                            <span class="timeline-badge">
+                                Case Registration
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EVENT 2 -->
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-date">
+                            07 August 2026
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <h3>
+                                Legal Document Added
+                            </h3>
+
+                            <p>
+                                FIR and supporting legal document
+                                were added to the case record.
+                            </p>
+
+                            <span class="timeline-badge">
+                                Document
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EVENT 3 -->
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-date">
+                            09 August 2026
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <h3>
+                                Evidence Added
+                            </h3>
+
+                            <p>
+                                Supporting evidence was recorded
+                                and organized for the case.
+                            </p>
+
+                            <span class="timeline-badge">
+                                Evidence
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EVENT 4 -->
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-date">
+                            12 August 2026
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <h3>
+                                Case Review Completed
+                            </h3>
+
+                            <p>
+                                Case information and available
+                                evidence were reviewed.
+                            </p>
+
+                            <span class="timeline-badge">
+                                Review
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EVENT 5 -->
+
+                    <div class="timeline-item">
+
+                        <span class="timeline-dot"></span>
+
+                        <div class="timeline-date">
+                            20 August 2026
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <h3>
+                                Upcoming Hearing
+                            </h3>
+
+                            <p>
+                                The next hearing is scheduled for
+                                20 August 2026 at 10:30 AM.
+                            </p>
+
+                            <span class="timeline-badge">
+                                Upcoming
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+
+            <div class="timeline-card">
+
+                <h2>
+                    Timeline Information
+                </h2>
+
+                <p style="color:#666; line-height:1.7;">
+
+                    The Case Timeline helps users understand the
+                    chronological development of a case. It can
+                    contain registration dates, hearings, document
+                    uploads, evidence submissions, reviews and
+                    other important case activities.
+
+                </p>
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="legal-disclaimer">
+
+                <strong>
+                    Important Notice
+                </strong>
+
+                <p>
+                    This timeline is intended for case-management
+                    and informational purposes. It does not provide
+                    professional legal advice.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+
+<script>
+
+function changeCase() {
+
+    const selectedCase =
+        document.getElementById("caseSelect").value;
+
+    const caseNumber =
+        document.getElementById("caseNumber");
+
+    const caseType =
+        document.getElementById("caseType");
+
+    const caseStatus =
+        document.getElementById("caseStatus");
+
+
+    if (selectedCase === "C1023") {
+
+        caseNumber.textContent = "C1023";
+        caseType.textContent = "Civil";
+        caseStatus.textContent = "Pending";
+
+    }
+
+    else if (selectedCase === "C1022") {
+
+        caseNumber.textContent = "C1022";
+        caseType.textContent = "Family";
+        caseStatus.textContent = "Hearing";
+
+    }
+
+    else {
+
+        caseNumber.textContent = "C1024";
+        caseType.textContent = "Criminal";
+        caseStatus.textContent = "Active";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

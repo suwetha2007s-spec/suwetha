@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Ask AI Assistant | AI Courtroom</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .ai-page {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+        }
+
+        .ai-card {
+            background: white;
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .ai-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            background: #eef2ff;
+        }
+
+        .ai-header h2 {
+            margin: 0;
+        }
+
+        .ai-header p {
+            margin: 5px 0 0;
+            color: #6b7280;
+        }
+
+        .question-box {
+            width: 100%;
+            min-height: 150px;
+            resize: vertical;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .question-box:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .ask-button,
+        .voice-button,
+        .clear-button {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 22px;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .ask-button {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .voice-button {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .clear-button {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .ask-button:hover,
+        .voice-button:hover,
+        .clear-button:hover {
+            opacity: 0.9;
+        }
+
+        .ask-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .answer-card {
+            display: none;
+        }
+
+        .answer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .answer-header h2 {
+            margin: 0;
+        }
+
+        .answer-content {
+            background: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            border-radius: 10px;
+            padding: 20px;
+            line-height: 1.7;
+            color: #374151;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .loading {
+            display: none;
+            margin-top: 15px;
+            color: #6366f1;
+            font-weight: 600;
+        }
+
+        .suggestions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+        }
+
+        .suggestion {
+            background: #f8fafc;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .suggestion:hover {
+            border-color: #6366f1;
+            background: #eef2ff;
+        }
+
+        .suggestion strong {
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .suggestion span {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .notice {
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 15px;
+            color: #9a3412;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link active">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Document</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            
+           
+
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+
+                <span>⇥</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="main-content">
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle"
+                        id="menuToggle"
+                        type="button">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                
+
+                <a
+                    href="{{ url_for('notifications') }}"
+                    class="notifications-button"
+                    id="notificationButton"
+                >
+                    🔔
+                    <span class="notifications-count"></span>
+                </a>
+
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= PAGE ================= -->
+
+        <div class="page-content">
+
+            <div class="ai-page">
+
+                <div class="page-header">
+
+                    <span class="welcome-small">
+                        AI POWERED LEGAL ASSISTANCE
+                    </span>
+
+                    <h1>
+                        Ask AI Assistant
+                    </h1>
+
+                    <p>
+                        Ask questions about legal information, cases,
+                        documents and evidence.
+                    </p>
+
+                </div>
+
+
+                <!-- ================= QUESTION CARD ================= -->
+
+                <div class="ai-card">
+
+                    <div class="ai-header">
+
+                        <div class="ai-icon">
+                            ✦
+                        </div>
+
+                        <div>
+
+                            <h2>
+                                How can I help you?
+                            </h2>
+
+                            <p>
+                                Enter your legal question below.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <textarea
+                        id="question"
+                        class="question-box"
+                        placeholder="Example: What documents are required for a property dispute?"
+                    ></textarea>
+
+
+                    <div class="action-row">
+
+                        <button
+                            type="button"
+                            class="ask-button"
+                            id="askButton"
+                            onclick="askQuestion()">
+
+                            ✦ Ask AI
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="voice-button"
+                            onclick="startVoiceInput()">
+
+                            🎤 Voice Input
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="clear-button"
+                            onclick="clearQuestion()">
+
+                            Clear
+
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="loading"
+                        class="loading">
+
+                        AI is analyzing your question...
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= ANSWER ================= -->
+
+                <div
+                    id="answerCard"
+                    class="ai-card answer-card">
+
+                    <div class="answer-header">
+
+                        <h2>
+                            AI Response
+                        </h2>
+
+                        <span>
+                            ✦ AI Assistant
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="answer"
+                        class="answer-content">
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= SUGGESTIONS ================= -->
+
+                <div class="ai-card">
+
+                    <h2>
+                        Suggested Questions
+                    </h2>
+
+                    <p>
+                        Try one of these questions to get started.
+                    </p>
+
+                    <br>
+
+                    <div class="suggestions">
+
+                        <div
+                            class="suggestion"
+                            onclick="useSuggestion(this)">
+
+                            <strong>
+                                Property Dispute
+                            </strong>
+
+                            <span>
+                                What documents are needed for a property dispute?
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="suggestion"
+                            onclick="useSuggestion(this)">
+
+                            <strong>
+                                Evidence
+                            </strong>
+
+                            <span>
+                                How should evidence be organized?
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="suggestion"
+                            onclick="useSuggestion(this)">
+
+                            <strong>
+                                Hearing
+                            </strong>
+
+                            <span>
+                                What should I prepare before a hearing?
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            class="suggestion"
+                            onclick="useSuggestion(this)">
+
+                            <strong>
+                                Legal Information
+                            </strong>
+
+                            <span>
+                                How can I find relevant legal information?
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ================= DISCLAIMER ================= -->
+
+                <div class="notice">
+
+                    <strong>Important Notice:</strong>
+
+                    This AI assistant provides informational assistance
+                    only. AI-generated responses should not be considered
+                    professional legal advice. Always consult a qualified
+                    legal professional for important legal decisions.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= FOOTER ================= -->
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- ================= ASK AI JAVASCRIPT ================= -->
+
+<script>
+
+async function askQuestion() {
+
+    const questionBox =
+        document.getElementById("question");
+
+    const loading =
+        document.getElementById("loading");
+
+    const answerCard =
+        document.getElementById("answerCard");
+
+    const answer =
+        document.getElementById("answer");
+
+    const askButton =
+        document.getElementById("askButton");
+
+
+    const question =
+        questionBox.value.trim();
+
+
+    /* =========================================
+       CHECK EMPTY QUESTION
+       ========================================= */
+
+    if (!question) {
+
+        alert("Please enter a legal question.");
+
+        questionBox.focus();
+
+        return;
+    }
+
+
+    /* =========================================
+       SHOW LOADING
+       ========================================= */
+
+    loading.style.display = "block";
+
+    answerCard.style.display = "none";
+
+    askButton.disabled = true;
+
+    askButton.textContent = "⏳ Processing...";
+
+
+    try {
+
+        /* =====================================
+           SEND QUESTION TO FLASK
+           ===================================== */
+
+        const response = await fetch(
+            "{{ url_for('ask') }}",
+            {
+                method: "POST",
+
+                headers: {
+                   "Content-Type": "application/json",
+                   "Accept": "application/json"
+               },
+
+          credentials: "same-origin",
+
+              body: JSON.stringify({
+    question: question
+})
+            }
+            );
+
+
+        /* =====================================
+           GET RESPONSE CONTENT
+           ===================================== */
+
+        const contentType =
+            response.headers.get("content-type") || "";
+
+
+        let data;
+
+
+        if (contentType.includes("application/json")) {
+
+            data = await response.json();
+
+        } else {
+
+            const text =
+                await response.text();
+
+            data = {
+                success: response.ok,
+                answer: text
+            };
+        }
+
+
+        /* =====================================
+           HIDE LOADING
+           ===================================== */
+
+        loading.style.display = "none";
+
+        askButton.disabled = false;
+
+        askButton.textContent = "✦ Ask AI";
+
+
+        /* =====================================
+           HANDLE FLASK RESPONSE
+           ===================================== */
+
+        if (!response.ok) {
+
+            answer.textContent =
+                data.answer ||
+                data.message ||
+                "The Flask server returned an error.";
+
+            answerCard.style.display = "block";
+
+            console.error(
+                "Flask error:",
+                response.status,
+                data
+            );
+
+            return;
+        }
+
+
+        let aiAnswer = "";
+
+
+        if (typeof data === "string") {
+
+            aiAnswer = data;
+
+        } else {
+
+            aiAnswer =
+                data.answer ||
+                data.response ||
+                data.result ||
+                data.message ||
+                "";
+        }
+
+
+        if (!aiAnswer) {
+
+            aiAnswer =
+                "The AI server returned an empty response.";
+
+            console.error(
+                "Empty AI response:",
+                data
+            );
+
+        }
+
+
+        /* =====================================
+           DISPLAY AI ANSWER
+           ===================================== */
+
+        answer.textContent =
+            aiAnswer;
+
+        answerCard.style.display =
+            "block";
+
+
+        /* =====================================
+           SCROLL TO ANSWER
+           ===================================== */
+
+        setTimeout(function () {
+
+            answerCard.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+
+        }, 100);
+
+
+    } catch (error) {
+
+        /* =====================================
+           NETWORK / JAVASCRIPT ERROR
+           ===================================== */
+
+        loading.style.display =
+            "none";
+
+        askButton.disabled =
+            false;
+
+        askButton.textContent =
+            "✦ Ask AI";
+
+
+        answer.textContent =
+            "Error connecting to the AI service.\n\n" +
+            "Please check that Flask and Ollama are running.";
+
+
+        answerCard.style.display =
+            "block";
+
+
+        console.error(
+            "Ask AI error:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================
+   CLEAR QUESTION
+   ========================================= */
+
+function clearQuestion() {
+
+    document.getElementById("question").value = "";
+
+    document.getElementById("answer").textContent = "";
+
+    document.getElementById("answerCard").style.display = "none";
+
+    document.getElementById("loading").style.display = "none";
+
+}
+
+
+/* =========================================
+   SUGGESTION CLICK
+   ========================================= */
+
+function useSuggestion(element) {
+
+    const text =
+        element.querySelector("span").textContent;
+
+    const questionBox =
+        document.getElementById("question");
+
+    questionBox.value =
+        text;
+
+    questionBox.focus();
+
+}
+
+
+/* =========================================
+   VOICE INPUT
+   ========================================= */
+
+function startVoiceInput() {
+
+    const SpeechRecognition =
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
+
+
+    if (!SpeechRecognition) {
+
+        alert(
+            "Voice recognition is not supported in this browser. Please use Google Chrome."
+        );
+
+        return;
+    }
+
+
+    const recognition =
+        new SpeechRecognition();
+
+
+    const languageSelector =
+        document.getElementById("languageSelector");
+
+
+    const selectedLanguage =
+        languageSelector
+            ? languageSelector.value
+            : "en";
+
+
+    if (selectedLanguage === "ta") {
+
+        recognition.lang =
+            "ta-IN";
+
+    } else if (selectedLanguage === "hi") {
+
+        recognition.lang =
+            "hi-IN";
+
+    } else {
+
+        recognition.lang =
+            "en-IN";
+    }
+
+
+    recognition.interimResults =
+        false;
+
+    recognition.continuous =
+        false;
+
+
+    recognition.onstart =
+        function () {
+
+            console.log(
+                "Voice recognition started."
+            );
+
+        };
+
+
+    recognition.onresult =
+        function(event) {
+
+            const transcript =
+                event.results[0][0].transcript;
+
+            document.getElementById("question").value =
+                transcript;
+
+        };
+
+
+    recognition.onerror =
+        function(event) {
+
+            console.error(
+                "Voice recognition error:",
+                event.error
+            );
+
+            alert(
+                "Voice input could not be completed."
+            );
+
+        };
+
+
+    recognition.start();
+
+}
+
+
+/* =========================================
+   CTRL + ENTER TO ASK AI
+   ========================================= */
+
+document.getElementById("question")
+    .addEventListener(
+        "keydown",
+        function(event) {
+
+            if (
+                event.key === "Enter" &&
+                event.ctrlKey
+            ) {
+
+                event.preventDefault();
+
+                askQuestion();
+
+            }
+
+        }
+    );
+
+</script>
+
+
+<!-- ================= MAIN SCRIPT ================= -->
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

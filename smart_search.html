@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Search - AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .search-page {
+            padding: 30px;
+        }
+
+        .search-header {
+            margin-bottom: 25px;
+        }
+
+        .search-header h1 {
+            margin: 0 0 8px;
+            font-size: 30px;
+        }
+
+        .search-header p {
+            margin: 0;
+            color: #777;
+        }
+
+        .smart-search-box {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+            margin-bottom: 25px;
+        }
+
+        .search-input-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 18px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: #6c63ff;
+        }
+
+        .search-button {
+            border: none;
+            padding: 0 25px;
+            border-radius: 10px;
+            background: #6c63ff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            opacity: 0.9;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            flex-wrap: wrap;
+        }
+
+        .search-filter {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+        }
+
+        .results-section h2 {
+            margin-top: 0;
+        }
+
+        .result-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 15px;
+            transition: 0.2s;
+        }
+
+        .result-card:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+        }
+
+        .result-card h3 {
+            margin: 0 0 8px;
+        }
+
+        .result-card p {
+            color: #666;
+            margin: 6px 0;
+        }
+
+        .result-tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #f0efff;
+            color: #5b52d6;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .empty-result {
+            text-align: center;
+            padding: 40px 10px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+            .search-page {
+                padding: 18px;
+            }
+
+            .search-input-row {
+                flex-direction: column;
+            }
+
+            .search-button {
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_document') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Document</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            
+            <a href="{{ url_for('hearing_reminder') }}" class="sidebar-link">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            <a href="{{ url_for('smart_search') }}" class="sidebar-link active">
+                <span>⌕</span>
+                <span>Smart Search</span>
+            </a>
+
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}" class="sidebar-link logout-link">
+                <span>⇥</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="navbar-right">
+
+                
+
+                
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>
+                            Legal User
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE -->
+
+        <div class="page-content search-page">
+
+            <div class="search-header">
+
+                <span class="welcome-small">
+                    AI POWERED SEARCH
+                </span>
+
+                <h1>
+                    Smart Search
+                </h1>
+
+                <p>
+                    Search cases, legal document and evidence from one place.
+                </p>
+
+            </div>
+
+
+            <!-- SEARCH BOX -->
+
+            <div class="smart-search-box">
+
+                <form
+    method="GET"
+    action="{{ url_for('smart_search') }}"
+>
+
+    <input
+        type="hidden"
+        name="category"
+        id="searchCategory"
+        value="{{ request.args.get('category', 'all') }}"
+    >
+
+    <div class="search-input-row">
+
+        <input
+            type="text"
+            id="smartSearchInput"
+            name="q"
+            class="search-input"
+            placeholder="Search case name, case number, document or evidence..."
+            value="{{ request.args.get('q', '') }}"
+        >
+
+        <button
+            type="submit"
+            class="search-button">
+            🔍 Search
+        </button>
+
+    </div>
+
+</form>
+
+
+                <div class="search-filters">
+
+                    <button
+                        type="button"
+                        class="search-filter"
+                        onclick="setSearch('Cases')">
+
+                        📁 Cases
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="search-filter"
+                        onclick="setSearch('Documents')">
+
+                        📄 Documents
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="search-filter"
+                        onclick="setSearch('Evidence')">
+
+                        🔎 Evidence
+
+                    </button>
+
+                    <button
+                        type="button"
+                        class="search-filter"
+                        onclick="setSearch('Legal_recommendation')">
+
+                        § Legal_Recommendation
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- RESULTS -->
+
+            <!-- RESULTS -->
+
+<div class="results-section">
+
+    <h2>Search Results</h2>
+
+    <div id="searchResults">
+
+        {% if query %}
+
+            <div class="result-card">
+                <h3>Search Query</h3>
+                <p>
+                    Results for:
+                    <strong>{{ query }}</strong>
+                </p>
+                <span class="result-tag">Smart Search</span>
+            </div>
+
+            <!-- CASE RESULTS -->
+
+            {% if cases %}
+                <h3>Cases ({{ cases|length }})</h3>
+
+                {% for case in cases %}
+                    <div class="result-card">
+                        <h3>
+                            {{ case['case_name'] or 'Unnamed Case' }}
+                        </h3>
+
+                        <p>
+                            Case ID: {{ case['case_id'] }}
+                        </p>
+
+                        <p>
+                            {{ case['description'] or 'No description available' }}
+                        </p>
+
+                        <span class="result-tag">Cases</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- DOCUMENT RESULTS -->
+
+            {% if documents %}
+                <h3>Documents ({{ documents|length }})</h3>
+
+                {% for document in documents %}
+                    <div class="result-card">
+                        <h3>
+                            {{ document['original_name'] or document['filename'] }}
+                        </h3>
+
+                        <p>
+                            {{ document['description'] or 'No description available' }}
+                        </p>
+
+                        <span class="result-tag">Documents</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- EVIDENCE RESULTS -->
+
+            {% if evidence %}
+                <h3>Evidence ({{ evidence|length }})</h3>
+
+                {% for item in evidence %}
+                    <div class="result-card">
+                        <h3>{{ item['title'] }}</h3>
+
+                        <p>
+                            {{ item['description'] or 'No description available' }}
+                        </p>
+
+                        <span class="result-tag">Evidence</span>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- NO MATCHING RESULTS -->
+
+            {% if not cases and not documents and not evidence %}
+                <div class="empty-result">
+                    <h3>No results found</h3>
+                    <p>
+                        No matching cases, documents, or evidence found.
+                    </p>
+                </div>
+            {% endif %}
+
+        {% else %}
+
+            <div class="empty-result">
+                <div style="font-size:45px;">🔍</div>
+
+                <h3>Start your search</h3>
+
+                <p>
+                    Enter a case number, case name, document name
+                    or evidence keyword above.
+                </p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+        <footer class="app-footer">
+
+            <p>
+                © 2026 AI Powered Courtroom Assistant
+            </p>
+
+            <span>
+                AI-based Legal Guidance &amp; Case Management
+            </span>
+
+        </footer>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+<script>
+
+function setSearch(value) {
+    document.getElementById("searchCategory").value =
+        value.toLowerCase();
+
+    document.getElementById("smartSearchInput").focus();
+}
+
+    
+function performSearch(event) {
+
+    const input = document.getElementById("smartSearchInput");
+
+    if (!input.value.trim()) {
+
+        event.preventDefault();
+
+        alert("Please enter something to search.");
+
+        input.focus();
+    }
+}
+
+</script>
+
+</body>
+</html>

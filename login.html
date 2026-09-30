@@ -1,0 +1,792 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        /* =====================================================
+           LOGIN PAGE
+           ===================================================== */
+
+        .login-page {
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            background: #f5f7fb;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 950px;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+
+            background: #ffffff;
+
+            border: 1px solid #e5e7eb;
+            border-radius: 18px;
+
+            overflow: hidden;
+
+            box-shadow: 0 12px 40px rgba(20, 35, 70, 0.10);
+        }
+
+        /* LEFT SIDE */
+
+        .login-intro {
+            padding: 55px 45px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            background: #3157d5;
+            color: #ffffff;
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            margin-bottom: 35px;
+        }
+
+        .login-brand-icon {
+            width: 48px;
+            height: 48px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 255, 255, 0.16);
+
+            border-radius: 12px;
+
+            font-size: 25px;
+        }
+
+        .login-brand h2 {
+            font-size: 18px;
+        }
+
+        .login-brand p {
+            margin-top: 3px;
+
+            color: rgba(255, 255, 255, 0.75);
+
+            font-size: 11px;
+        }
+
+        .login-intro h1 {
+            font-size: 30px;
+            line-height: 1.3;
+
+            margin-bottom: 13px;
+        }
+
+        .login-intro > p {
+            color: rgba(255, 255, 255, 0.82);
+
+            font-size: 13px;
+            line-height: 1.8;
+
+            max-width: 370px;
+        }
+
+        .login-features {
+            margin-top: 32px;
+
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .login-feature {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            color: rgba(255, 255, 255, 0.9);
+
+            font-size: 11px;
+        }
+
+        .login-feature-icon {
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: rgba(255, 255, 255, 0.13);
+
+            border-radius: 7px;
+        }
+
+        /* RIGHT SIDE */
+
+        .login-form-section {
+            padding: 55px 45px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-form-header {
+            margin-bottom: 28px;
+        }
+
+        .login-form-header h2 {
+            font-size: 24px;
+            color: #182033;
+        }
+
+        .login-form-header p {
+            margin-top: 7px;
+
+            color: #6b7280;
+
+            font-size: 12px;
+        }
+
+        .login-form {
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #374151;
+
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+
+            left: 13px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #9ca3af;
+
+            font-size: 16px;
+
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 44px;
+
+            padding: 0 13px 0 40px;
+
+            border: 1px solid #dfe3eb;
+            border-radius: 9px;
+
+            background: #ffffff;
+
+            color: #182033;
+
+            font-size: 12px;
+
+            outline: none;
+
+            transition: 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3157d5;
+
+            box-shadow: 0 0 0 3px rgba(49, 87, 213, 0.08);
+        }
+
+        .form-input::placeholder {
+            color: #a1a7b3;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            right: 12px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            border: none;
+
+            background: transparent;
+
+            color: #8b93a4;
+
+            font-size: 15px;
+        }
+
+        .login-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin: 5px 0 22px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+
+            color: #6b7280;
+
+            font-size: 10px;
+        }
+
+        .remember-me input {
+            accent-color: #3157d5;
+        }
+
+        .forgot-password {
+            color: #3157d5;
+
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            height: 44px;
+
+            border: none;
+            border-radius: 9px;
+
+            background: #3157d5;
+            color: #ffffff;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+        .login-button:hover {
+            background: #2445b5;
+
+            transform: translateY(-1px);
+        }
+
+        .register-text {
+            margin-top: 23px;
+
+            text-align: center;
+
+            color: #6b7280;
+
+            font-size: 11px;
+        }
+
+        .register-text a {
+            color: #3157d5;
+
+            font-weight: 600;
+        }
+
+        .register-text a:hover {
+            text-decoration: underline;
+        }
+
+        .login-error {
+            margin-bottom: 17px;
+
+            padding: 10px 12px;
+
+            background: #fff1f2;
+
+            border: 1px solid #fecdd3;
+
+            border-radius: 8px;
+
+            color: #be123c;
+
+            font-size: 10px;
+        }
+
+        .login-success {
+            margin-bottom: 17px;
+
+            padding: 10px 12px;
+
+            background: #f0fdf4;
+
+            border: 1px solid #bbf7d0;
+
+            border-radius: 8px;
+
+            color: #15803d;
+
+            font-size: 10px;
+        }
+
+        .login-disclaimer {
+            margin-top: 25px;
+
+            padding-top: 18px;
+
+            border-top: 1px solid #eef0f4;
+
+            color: #9ca3af;
+
+            font-size: 9px;
+
+            line-height: 1.6;
+
+            text-align: center;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 750px) {
+
+            .login-page {
+                padding: 18px;
+            }
+
+            .login-container {
+                grid-template-columns: 1fr;
+
+                max-width: 500px;
+            }
+
+            .login-intro {
+                padding: 35px 30px;
+            }
+
+            .login-intro h1 {
+                font-size: 25px;
+            }
+
+            .login-features {
+                margin-top: 22px;
+            }
+
+            .login-form-section {
+                padding: 35px 30px;
+            }
+        }
+
+        @media (max-width: 420px) {
+
+            .login-page {
+                padding: 10px;
+            }
+
+            .login-intro,
+            .login-form-section {
+                padding: 28px 22px;
+            }
+
+            .login-intro h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-container">
+
+        <!-- =================================================
+             LEFT INTRODUCTION
+             ================================================= -->
+
+        <section class="login-intro">
+
+            <div class="login-brand">
+
+                <div class="login-brand-icon">
+                    ⚖
+                </div>
+
+                <div>
+                    <h2>AI Courtroom</h2>
+                    <p>Legal Assistant</p>
+                </div>
+
+            </div>
+
+
+            <h1>
+                AI Powered Courtroom Assistant
+            </h1>
+
+            <p>
+                Intelligent legal assistance and case management
+                designed to help users organize cases, documents,
+                evidence and legal information.
+            </p>
+
+
+            <div class="login-features">
+
+                <div class="login-feature">
+
+                    <div class="login-feature-icon">
+                        ✦
+                    </div>
+
+                    <span>
+                        AI-powered legal assistance
+                    </span>
+
+                </div>
+
+
+                <div class="login-feature">
+
+                    <div class="login-feature-icon">
+                        ▤
+                    </div>
+
+                    <span>
+                        Smart legal document management
+                    </span>
+
+                </div>
+
+
+                <div class="login-feature">
+
+                    <div class="login-feature-icon">
+                        ◈
+                    </div>
+
+                    <span>
+                        Evidence and case management
+                    </span>
+
+                </div>
+
+
+                <div class="login-feature">
+
+                    <div class="login-feature-icon">
+                        ◷
+                    </div>
+
+                    <span>
+                        Case tracking and hearing reminders
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LOGIN FORM
+             ================================================= -->
+
+        <section class="login-form-section">
+
+            <div class="login-form-header">
+
+                <h2>
+                    Welcome Back
+                </h2>
+
+                <p>
+                    Sign in to continue to your courtroom assistant.
+                </p>
+
+            </div>
+
+
+            <!-- Flask error message -->
+
+            {% with messages = get_flashed_messages() %}
+
+                {% if messages %}
+
+                    {% for message in messages %}
+
+                        <div class="login-error">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <form
+                class="login-form"
+                method="POST"
+                action="{{ url_for('login') }}"
+            >
+
+                <!-- EMAIL / USERNAME -->
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Email or Username
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ◉
+                        </span>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="form-input"
+                            placeholder="Enter your email or username"
+                            autocomplete="username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ●
+                        </span>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="form-input"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle"
+                            aria-label="Show password"
+                        >
+                            ◉
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- OPTIONS -->
+
+                <div class="login-options">
+
+                    <label class="remember-me">
+
+                        <input
+                            type="checkbox"
+                            name="remember"
+                        >
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+
+                    <a
+                        href="#"
+                        class="forgot-password"
+                        onclick="return false;"
+                    >
+                        Forgot Password?
+                    </a>
+
+                </div>
+
+
+                <!-- LOGIN BUTTON -->
+
+                <button
+                    type="submit"
+                    class="login-button"
+                >
+                    Sign In
+                </button>
+
+            </form>
+
+
+            <!-- REGISTER -->
+
+            <div class="register-text">
+
+                Don't have an account?
+
+                <a href="{{ url_for('register') }}">
+                    Create Account
+                </a>
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="login-disclaimer">
+
+                AI Powered Courtroom Assistant provides
+                informational assistance and is not a substitute
+                for professional legal advice.
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    /* =====================================================
+       PASSWORD SHOW / HIDE
+       ===================================================== */
+
+    const passwordInput =
+        document.getElementById("password");
+
+    const passwordToggle =
+        document.getElementById("passwordToggle");
+
+
+    if (passwordInput && passwordToggle) {
+
+        passwordToggle.addEventListener(
+            "click",
+            function () {
+
+                if (passwordInput.type === "password") {
+
+                    passwordInput.type = "text";
+
+                    passwordToggle.textContent = "◉";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Hide password"
+                    );
+
+                } else {
+
+                    passwordInput.type = "password";
+
+                    passwordToggle.textContent = "◉";
+
+                    passwordToggle.setAttribute(
+                        "aria-label",
+                        "Show password"
+                    );
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ENTER KEY
+       ===================================================== */
+
+    document.addEventListener(
+        "keydown",
+        function (event) {
+
+            if (event.key === "Enter") {
+
+                const activeElement =
+                    document.activeElement;
+
+                if (
+                    activeElement &&
+                    (
+                        activeElement.id === "username" ||
+                        activeElement.id === "password"
+                    )
+                ) {
+
+                    const form =
+                        document.querySelector(".login-form");
+
+                    if (form) {
+                        form.requestSubmit();
+                    }
+
+                }
+
+            }
+
+        }
+    );
+
+</script>
+
+</body>
+</html>
+```

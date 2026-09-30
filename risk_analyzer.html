@@ -1,0 +1,678 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Case Risk Analyzer | AI Courtroom</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-light: #eef2ff;
+            --dark: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --background: #f5f7fb;
+            --white: #ffffff;
+            --warning: #d97706;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--dark);
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background: #111827;
+            padding: 25px 18px;
+            z-index: 1000;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            margin-bottom: 38px;
+            padding: 0 8px;
+        }
+
+        .logo i {
+            font-size: 27px;
+            color: #a5b4fc;
+        }
+
+        .logo h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 14px 16px;
+            border-radius: 10px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .sidebar ul li a:hover {
+            background: #3730a3;
+            color: white;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .navbar h2 {
+            font-size: 25px;
+            margin: 0;
+        }
+
+        .navbar h2 i {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid var(--border);
+            padding: 11px 16px;
+            border-radius: 9px;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .hero-card {
+            background: linear-gradient(120deg, #312e81, #4f46e5);
+            color: white;
+            border-radius: 18px;
+            padding: 30px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            box-shadow: 0 10px 25px rgba(49,46,129,0.12);
+        }
+
+        .hero-card h1 {
+            margin: 0 0 12px;
+            font-size: 27px;
+        }
+
+        .hero-card p {
+            margin: 0;
+            color: #e0e7ff;
+            line-height: 1.7;
+            max-width: 650px;
+        }
+
+        .hero-icon {
+            width: 75px;
+            height: 75px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0,1.2fr) minmax(280px,0.8fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .report-card,
+        .info-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(15,23,42,0.035);
+        }
+
+        .card-heading {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            margin-bottom: 22px;
+        }
+
+        .heading-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .card-heading h2 {
+            font-size: 19px;
+            margin: 0 0 5px;
+        }
+
+        .card-heading p {
+            color: var(--muted);
+            margin: 0;
+            font-size: 13px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-family: inherit;
+            font-size: 14px;
+            color: var(--dark);
+            background: white;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+        }
+
+        .form-help {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 7px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 14px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #3730a3;
+        }
+
+        .info-card h3 {
+            font-size: 17px;
+            margin: 0 0 18px;
+        }
+
+        .info-item {
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-item i {
+            color: var(--primary);
+            background: var(--primary-light);
+            padding: 11px;
+            border-radius: 10px;
+        }
+
+        .info-item strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        .result-score {
+            padding: 20px;
+            background: #eef2ff;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .result-score h1 {
+            font-size: 36px;
+            color: var(--primary);
+            margin: 0;
+        }
+
+        .result-message {
+            line-height: 1.7;
+            color: #475569;
+            overflow-wrap: anywhere;
+        }
+
+        .extracted-text {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #334155;
+        }
+
+        .notice {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 10px;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            color: #92400e;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-top: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px 10px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        @media (max-width: 1000px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                padding: 15px;
+            }
+
+            .sidebar .logo {
+                margin-bottom: 15px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .hero-card {
+                padding: 23px;
+            }
+
+            .navbar h2 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <div class="sidebar">
+        <div class="logo">
+            <i class="fas fa-scale-balanced"></i>
+            <h2>AI Courtroom</h2>
+        </div>
+
+        <ul>
+            <li>
+                <a href="{{ url_for('dashboard') }}">
+                    <i class="fas fa-house"></i>
+                    Dashboard
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+
+    <div class="main-content">
+
+        <div class="navbar">
+            <h2>
+                <i class="fas fa-chart-line"></i>
+                AI Case Risk Analyzer
+            </h2>
+
+            <a href="{{ url_for('dashboard') }}" class="back-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Dashboard
+            </a>
+        </div>
+
+        <!-- HERO -->
+
+        <div class="hero-card">
+            <div>
+                <h1>Case Risk Analysis</h1>
+                <p>
+                    Upload a case PDF to extract its text and
+                    review important case preparation details.
+                </p>
+            </div>
+
+            <div class="hero-icon">
+                <i class="fas fa-shield-halved"></i>
+            </div>
+        </div>
+
+        <div class="content-grid">
+
+            <!-- LEFT COLUMN -->
+
+            <div>
+
+                <!-- UPLOAD FORM -->
+
+                <div class="report-card">
+
+                    <div class="card-heading">
+                        <div class="heading-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+
+                        <div>
+                            <h2>Analyze Case Risk</h2>
+                            <p>Upload your case PDF for analysis.</p>
+                        </div>
+                    </div>
+
+                    <form
+                        action="{{ url_for('risk_analyser') }}"
+                        method="POST"
+                        enctype="multipart/form-data">
+
+                        <div class="form-group">
+                            <label for="case_id">
+                                Case ID
+                                <span style="color:red;">*</span>
+                            </label>
+
+                            <input
+                                type="text"
+                                id="case_id"
+                                name="case_id"
+                                placeholder="Enter Case ID"
+                                required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="case_file">
+                                Upload Case PDF
+                                <span style="color:red;">*</span>
+                            </label>
+
+                            <input
+                                type="file"
+                                id="case_file"
+                                name="case_file"
+                                accept=".pdf,application/pdf"
+                                required>
+
+                            <div class="form-help">
+                                Only PDF files are supported.
+                                Maximum upload size: 50 MB.
+                                Scanned PDFs without selectable text
+                                are not supported.
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn">
+                            <i class="fas fa-robot"></i>
+                            Analyze Risk
+                        </button>
+
+                    </form>
+                </div>
+
+                <!-- RESULT -->
+
+                {% if result %}
+
+                <div class="report-card" id="risk-result">
+
+                    <div class="card-heading">
+                        <div class="heading-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+
+                        <div>
+                            <h2>Risk Analysis Result</h2>
+                            <p>
+                                Case ID: {{ result.case_id }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="result-score">
+                        <p style="color:#64748b;margin:0 0 8px;">
+                            Assessment Score
+                        </p>
+
+                        <h1>{{ result.score }}%</h1>
+
+                        <p style="font-weight:600;margin-bottom:0;">
+                            {{ result.level }}
+                        </p>
+                    </div>
+
+                    <p class="result-message">
+                        {{ result.message }}
+                    </p>
+
+                    <!-- EXTRACTED PDF TEXT -->
+
+                    {% if result.extracted_text %}
+
+                    <div style="margin-top:25px;">
+
+                        <div class="card-heading">
+                            <div class="heading-icon">
+                                <i class="fas fa-file-lines"></i>
+                            </div>
+
+                            <div>
+                                <h2>Extracted Case Information</h2>
+                                <p>
+                                    Text extracted from uploaded PDF
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="extracted-text">{{ result.extracted_text }}</div>
+
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- RIGHT COLUMN -->
+
+            <div>
+
+                <div class="info-card">
+
+                    <h3>
+                        <i class="fas fa-clipboard-check"
+                           style="color:#4338ca;margin-right:8px;">
+                        </i>
+                        Analysis Overview
+                    </h3>
+
+                    <div class="info-item">
+                        <i class="fas fa-file-lines"></i>
+
+                        <div>
+                            <strong>Case Information</strong>
+                            <p>
+                                Extract readable text from the
+                                uploaded case document.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-folder-open"></i>
+
+                        <div>
+                            <strong>Evidence Review</strong>
+                            <p>
+                                Review the case facts and identify
+                                information requiring verification.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-scale-balanced"></i>
+
+                        <div>
+                            <strong>Legal Considerations</strong>
+                            <p>
+                                Review relevant legal issues and
+                                case preparation requirements.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <i class="fas fa-list-check"></i>
+
+                        <div>
+                            <strong>Preparation Checklist</strong>
+                            <p>
+                                Track missing information,
+                                document verification, and
+                                follow-up requirements.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- DISCLAIMER -->
+
+                <div class="notice">
+                    <i class="fas fa-circle-info"></i>
+
+                    <div>
+                        <strong>Important Notice</strong>
+                        <br>
+
+                        The current assessment score is a
+                        basic educational indicator based on
+                        extracted text length. It is not an
+                        actual legal risk prediction and does
+                        not replace professional legal advice.
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <footer class="footer">
+            © 2026 AI Powered Courtroom Assistant
+        </footer>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+</html>

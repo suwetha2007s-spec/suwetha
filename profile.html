@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile | AI Powered Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        <i class="fas fa-scale-balanced"></i>
+
+        <h2>AI Courtroom</h2>
+
+    </div>
+
+    <ul>
+
+        <li>
+            <a href="{{ url_for('dashboard') }}">
+                <i class="fas fa-house"></i>
+                Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('profile') }}" class="active">
+                <i class="fas fa-user"></i>
+                Profile
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('legal_documents') }}">
+                <i class="fas fa-folder-open"></i>
+                Legal Documents
+            </a>
+        </li>
+
+        <li>
+            <a href="{{ url_for('logout') }}">
+                <i class="fas fa-right-from-bracket"></i>
+                Logout
+            </a>
+        </li>
+
+    </ul>
+
+</div>
+
+<div class="main-content">
+
+    <div class="navbar">
+
+        <h2>
+
+            <i class="fas fa-user-circle"></i>
+
+            My Profile
+
+        </h2>
+
+    </div>
+
+    <div class="report-card">
+
+        <h2>Personal Information</h2>
+
+        <br>
+
+        <form method="POST"
+              action="{{ url_for('profile') }}">
+
+            <div class="form-group">
+
+                <label>Full Name</label>
+
+                <input
+                    type="text"
+                    name="fullname"
+                    value="{{ user.fullname }}">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ user.email }}">
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Mobile Number</label>
+
+                <input
+                    type="text"
+                    name="mobile"
+                    value="{{ user.mobile }}">
+
+            </div>
+            <div class="form-group">
+
+                <label>Gender</label>
+
+                <select name="gender">
+
+                    <option value="Male">Male</option>
+
+                    <option value="Female">Female</option>
+
+                    <option value="Other">Other</option>
+
+                </select>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Address</label>
+
+                <textarea
+                    name="address"
+                    rows="4">{{ user.address }}</textarea>
+
+            </div>
+
+            <button
+                type="submit"
+                class="btn">
+
+                <i class="fas fa-save"></i>
+
+                Update Profile
+
+            </button>
+
+        </form>
+
+    </div>
+
+    <!-- ==========================
+         Profile Summary
+    ========================== -->
+
+    <div class="dashboard-grid">
+
+        <div class="dashboard-card">
+
+            <h3>Total Cases</h3>
+
+            <h1>5</h1>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h3>Documents Uploaded</h3>
+
+            <h1>18</h1>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h3>Evidence Files</h3>
+
+            <h1>12</h1>
+
+        </div>
+
+        <div class="dashboard-card">
+
+            <h3>AI Queries</h3>
+
+            <h1>36</h1>
+
+        </div>
+
+    </div>
+
+    <!-- ==========================
+         Recent Activity
+    ========================== -->
+
+    <div class="report-card">
+
+        <h2>
+            <i class="fas fa-clock"></i>
+            Recent Activity
+        </h2>
+
+        <br>
+
+        <ul>
+
+            <li>✅ Profile updated successfully.</li>
+
+            <li>📄 Uploaded a legal document.</li>
+
+            <li>🤖 Asked AI Legal Assistant.</li>
+
+            <li>📅 Hearing reminder created.</li>
+
+            <li>📊 Generated case report.</li>
+
+        </ul>
+
+    </div>
+
+    <!-- ==========================
+         Footer
+    ========================== -->
+
+    <footer class="footer">
+
+        <p>
+            © 2026 AI Powered Courtroom Assistant.
+            All Rights Reserved.
+        </p>
+
+    </footer>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>

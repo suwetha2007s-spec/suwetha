@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hearing Reminder | AI Courtroom Assistant</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .hearing-page {
+            padding: 30px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .page-header p {
+            color: #777;
+            margin-top: 8px;
+        }
+
+        .reminder-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .reminder-card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+        }
+
+        .reminder-card h2 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        .reminder-card > p {
+            color: #777;
+        }
+
+        .hearing-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .reminder-button {
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            cursor: pointer;
+            font-weight: 600;
+            background: #315efb;
+            color: white;
+        }
+
+        .reminder-button:hover {
+            background: #244bd0;
+        }
+
+        .hearing-item {
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 18px;
+            background: #fafafa;
+            margin-top: 15px;
+        }
+
+        .hearing-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .case-id {
+            font-size: 13px;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .hearing-date {
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .hearing-location {
+            color: #777;
+            margin-top: 6px;
+        }
+
+        .hearing-notes {
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #eaf2ff;
+            color: #315efb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #777;
+        }
+
+        .back-button {
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: #f1f1f1;
+            color: #333;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #eaf9f0;
+            color: #17834d;
+        }
+
+        @media (max-width: 850px) {
+            .reminder-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">⚖</div>
+
+            <div>
+                <h2>AI Courtroom</h2>
+                <p>Legal Assistant</p>
+            </div>
+        </div>
+
+        <nav class="sidebar-menu">
+
+            <a href="{{ url_for('dashboard') }}" class="sidebar-link">
+                <span>▣</span>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="{{ url_for('ask') }}" class="sidebar-link">
+                <span>✦</span>
+                <span>Ask AI Assistant</span>
+            </a>
+
+            <a href="{{ url_for('legal_documents') }}" class="sidebar-link">
+                <span>▤</span>
+                <span>Legal Documents</span>
+            </a>
+
+            <a href="{{ url_for('evidence_manager') }}" class="sidebar-link">
+                <span>◈</span>
+                <span>Evidence Manager</span>
+            </a>
+
+            <a href="{{ url_for('case_tracker') }}" class="sidebar-link">
+                <span>◫</span>
+                <span>Case Tracker</span>
+            </a>
+
+            <a href="{{ url_for('ranking') }}" class="sidebar-link">
+                <span>★</span>
+                <span>Ranking & Insights</span>
+            </a>
+
+            <a href="{{ url_for('multi_language') }}" class="sidebar-link">
+                <span>文</span>
+                <span>Multi-language Support</span>
+            </a>
+
+            
+
+            
+
+            <a href="{{ url_for('hearing_reminder') }}"
+               class="sidebar-link active">
+                <span>◷</span>
+                <span>Hearing Reminder</span>
+            </a>
+
+            <a href="{{ url_for('case_timeline') }}" class="sidebar-link">
+                <span>◌</span>
+                <span>Case Timeline</span>
+            </a>
+
+            <a href="{{ url_for('document_analyzer') }}" class="sidebar-link">
+                <span>⌁</span>
+                <span>AI Document Analyzer</span>
+            </a>
+
+            
+
+            <a href="{{ url_for('report_generator') }}" class="sidebar-link">
+                <span>▥</span>
+                <span>Report Generator</span>
+            </a>
+
+            <a href="{{ url_for('notifications') }}" class="sidebar-link">
+                <span>♢</span>
+                <span>Notification Center</span>
+            </a>
+
+            <a href="{{ url_for('voice_query') }}" class="sidebar-link">
+                <span>♩</span>
+                <span>Voice Query</span>
+            </a>
+
+            <a href="{{ url_for('case_outcome') }}" class="sidebar-link">
+                <span>◉</span>
+                <span>Case Outcome Prediction</span>
+            </a>
+
+            <a href="{{ url_for('duplicate_detection') }}" class="sidebar-link">
+                <span>▧</span>
+                <span>Duplicate Documents Detection</span>
+            </a>
+
+            <a href="{{ url_for('risk_analyser') }}" class="sidebar-link">
+                <span>⚠</span>
+                <span>Case Risk Analyser</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-footer">
+
+            <a href="{{ url_for('logout') }}"
+               class="sidebar-link logout-link">
+                <span>⇥</span>
+                <span>Logout</span>
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+
+    <main class="main-content">
+
+        <!-- TOP NAVBAR -->
+
+        <header class="top-navbar">
+
+            <div class="navbar-left">
+
+                <button class="menu-toggle" id="menuToggle">
+                    ☰
+                </button>
+
+                <div class="search-wrapper">
+
+                    <span class="search-icon">⌕</span>
+
+                    <input
+                        type="text"
+                        id="globalSearch"
+                        placeholder="Search cases, documents, evidence..."
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="navbar-right">
+
+                
+
+                
+
+                <div class="user-profile">
+
+                    <div class="user-avatar">
+                        {{ session.get('username', 'S')[0]|upper }}
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            {{ session.get('username', 'Suwetha') }}
+                        </strong>
+
+                        <span>Legal User</span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- HEARING PAGE -->
+
+        <div class="page-content hearing-page">
+
+            <div class="page-header">
+
+                <div>
+
+                    <h1>◷ Hearing Reminder</h1>
+
+                    <p>
+                        Manage upcoming court hearings and reminder information.
+                    </p>
+
+                </div>
+
+                <a href="{{ url_for('case_tracker') }}"
+                   class="back-button">
+
+                    ← Case Tracker
+
+                </a>
+
+            </div>
+
+
+            <!-- FLASH MESSAGES -->
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    {% for category, message in messages %}
+
+                        <div class="message">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                {% endif %}
+
+            {% endwith %}
+
+
+            <!-- FORM AND NEXT HEARING -->
+
+            <div class="reminder-grid">
+
+
+                <!-- SET HEARING REMINDER -->
+
+                <div class="reminder-card">
+
+                    <h2>Set Hearing Reminder</h2>
+
+                    <p>
+                        Add hearing information for a case.
+                    </p>
+
+
+                    <!-- IMPORTANT: POST GOES TO add_hearing -->
+
+                    <form
+                        class="hearing-form"
+                        method="POST"
+                        action="{{ url_for('add_hearing') }}"
+                    >
+
+
+                        <div class="form-group">
+
+                            <label for="case_number">
+                                Case Number
+                            </label>
+
+                            <input
+                                type="text"
+                                id="case_number"
+                                name="case_id"
+                                placeholder="Example: C1024"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="hearing_date">
+                                Hearing Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="hearing_date"
+                                name="hearing_date"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="hearing_time">
+                                Hearing Time
+                            </label>
+
+                            <input
+                                type="time"
+                                id="hearing_time"
+                                name="hearing_time"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="location">
+                                Court / Location
+                            </label>
+
+                            <input
+                                type="text"
+                                id="location"
+                                name="court"
+                                placeholder="Example: District Court, Dindigul"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="notes">
+                                Notes
+                            </label>
+
+                            <textarea
+                                id="notes"
+                                name="notes"
+                                placeholder="Enter hearing notes..."
+                            ></textarea>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="reminder-button"
+                        >
+
+                            ◷ Set Reminder
+
+                        </button>
+
+
+                    </form>
+
+                </div>
+
+
+                <!-- NEXT HEARING -->
+
+                <div class="reminder-card">
+
+                    <h2>Next Hearing</h2>
+
+                    <p>
+                        Upcoming hearing information
+                    </p>
+
+
+                    {% if hearings %}
+
+                        {% set next_hearing = hearings[0] %}
+
+                        <div class="hearing-item">
+
+                            <div class="hearing-item-header">
+
+                                <div>
+
+                                    <div class="case-id">
+                                        CASE ID
+                                    </div>
+
+                                    <h3>
+                                        {{ next_hearing["case_id"] }}
+                                    </h3>
+
+                                </div>
+
+                                <span class="status-badge">
+                                    Upcoming
+                                </span>
+
+                            </div>
+
+
+                            <div class="hearing-date">
+
+                                ◷ {{ next_hearing["hearing_date"] }}
+
+                                {% if next_hearing["hearing_time"] %}
+                                    · {{ next_hearing["hearing_time"] }}
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="hearing-location">
+
+                                ⌖ {{ next_hearing["court"] or "Court not specified" }}
+
+                            </div>
+
+
+                            {% if next_hearing["notes"] %}
+
+                                <p class="hearing-notes">
+                                    {{ next_hearing["notes"] }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty-state">
+
+                            <p>
+                                No upcoming hearings added yet.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <!-- ALL UPCOMING HEARINGS -->
+
+            <div class="reminder-card">
+
+                <h2>Upcoming Hearings</h2>
+
+                <p>
+                    Scheduled hearings for your cases.
+                </p>
+
+
+                {% if hearings %}
+
+                    <div class="upcoming-list">
+
+                        {% for hearing in hearings %}
+
+                            <div class="hearing-item">
+
+                                <div class="hearing-item-header">
+
+                                    <div>
+
+                                        <div class="case-id">
+
+                                            CASE {{ hearing["case_id"] }}
+
+                                        </div>
+
+                                    </div>
+
+                                    <span class="status-badge">
+                                        Upcoming
+                                    </span>
+
+                                </div>
+
+
+                                <div class="hearing-date">
+
+                                    ◷ {{ hearing["hearing_date"] }}
+
+                                    {% if hearing["hearing_time"] %}
+                                        · {{ hearing["hearing_time"] }}
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="hearing-location">
+
+                                    ⌖ {{ hearing["court"] or "Court not specified" }}
+
+
+                                </div>
+                                <form action="{{ url_for('delete_hearing', hearing_id=hearing['id']) }}"
+      method="POST"
+      style="display:inline;"
+      onsubmit="return confirm('Are you sure you want to delete this hearing?');">
+
+    <button type="submit"
+            class="action-btn"
+            style="background:blue; color:white; border:none; cursor:pointer; padding:8px 14px; border-radius:6px;">
+        <i class="fas fa-trash"></i>
+        Delete
+    </button>
+
+</form>
+
+
+                                {% if hearing["notes"] %}
+
+                                    <p class="hearing-notes">
+                                        {{ hearing["notes"] }}
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <p>
+                            No hearings found.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- DISCLAIMER -->
+
+            <div class="legal-disclaimer">
+
+                <strong>Important Notice</strong>
+
+                <p>
+                    Hearing reminders are provided for organizational purposes.
+                    Always verify the official hearing date and time from the
+                    appropriate court records.
+                </p>
+
+            </div>
+
+
+            <!-- FOOTER -->
+
+            <footer class="app-footer">
+
+                <p>
+                    © 2026 AI Powered Courtroom Assistant
+                </p>
+
+                <span>
+                    AI-based Legal Guidance &amp; Case Management
+                </span>
+
+            </footer>
+
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
+</body>
+
+</html>
